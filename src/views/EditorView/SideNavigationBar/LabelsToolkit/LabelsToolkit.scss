@@ -1,4 +1,4 @@
-@import '../../../../settings/Settings';
+@import "../../../../settings/Settings";
 
 .LabelsToolkit {
   align-self: stretch;
@@ -11,7 +11,35 @@
   justify-content: flex-start;
   align-items: center;
   align-content: flex-start;
-
+  .LabelsToolkitWrapper {
+    width: 100%;
+    // height: 100%;
+    > p {
+      cursor: pointer;
+      &.active {
+        color: yellow;
+        font-size: 20px;
+        font-weight: bold;
+      }
+      height: 30px;
+      line-height: 30px;
+      margin: 10px 0;
+      text-align: center;
+      color: #fff;
+    }
+  }
+  .addButton {
+    display: flex;
+    height: 50px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    > button {
+      width: 30%;
+      height: 60%;
+      border-radius: 5px;
+    }
+  }
   .Header {
     position: relative;
     align-self: stretch;
@@ -120,4 +148,3 @@
 //    overflow: hidden;
 //  }
 //}
-

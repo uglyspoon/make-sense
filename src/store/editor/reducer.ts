@@ -8,10 +8,12 @@ const initialState: EditorState = {
   activeLabelId: null,
   highlightedLabelId: null,
   projectType: null,
-  projectName: "my-project-name",
+  projectName: "我的项目",
   imagesData: [],
-  labelNames: [],
+  labelNames: ["头顶", "左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"],
   firstLabelCreatedFlag: false,
+  personList: ["person-1", "person-2"],
+  activePersonIndex: 1,
 };
 
 export function editorReducer(state = initialState, action: EditorActionTypes): EditorState {
@@ -88,6 +90,18 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
       return {
         ...state,
         firstLabelCreatedFlag: action.payload.firstLabelCreatedFlag,
+      };
+    }
+    case Action.UPDATE_PERSON_LIST: {
+      return {
+        ...state,
+        personList: state.personList.concat(action.payload.personName),
+      };
+    }
+    case Action.UPDATE_ACTIVE_PERSON_INDEX: {
+      return {
+        ...state,
+        activePersonIndex: action.payload.personIndex,
       };
     }
     default:

@@ -4,11 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { TextButton } from "../../Common/TextButton/TextButton";
 import { ImageData } from "../../../store/editor/types";
 import { connect } from "react-redux";
-import {
-  addImageData,
-  updateActiveImageIndex,
-  updateProjectType,
-} from "../../../store/editor/actionCreators";
+import { addImageData, updateActiveImageIndex, updateProjectType } from "../../../store/editor/actionCreators";
 import { AppState } from "../../../store";
 import { ProjectType } from "../../../data/enums/ProjectType";
 import { FileUtil } from "../../../utils/FileUtil";
@@ -37,10 +33,8 @@ const ImagesDropZone: React.FC<IProps> = ({
     if (acceptedFiles.length > 0) {
       updateProjectType(projectType);
       updateActiveImageIndex(0);
-      addImageData(
-        acceptedFiles.map((fileData: File) => FileUtil.mapFileDataToImageData(fileData))
-      );
-      updateActivePopupType(PopupWindowType.INSERT_LABEL_NAMES);
+      addImageData(acceptedFiles.map((fileData: File) => FileUtil.mapFileDataToImageData(fileData)));
+      // updateActivePopupType(PopupWindowType.INSERT_LABEL_NAMES);
     }
   };
 

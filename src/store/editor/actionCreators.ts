@@ -111,3 +111,20 @@ export function updateFirstLabelCreatedFlag(firstLabelCreatedFlag: boolean) {
     },
   };
 }
+
+export function updatePersonList(personName: string) {
+  return {
+    type: Action.UPDATE_PERSON_LIST,
+    payload: {
+      personName,
+    },
+  };
+}
+export function updateActivePersonIndex(personIndex: number) {
+  return {
+    type: Action.UPDATE_ACTIVE_PERSON_INDEX,
+    payload: {
+      personIndex,
+    },
+  };
+}

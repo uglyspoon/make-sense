@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import "./InsertLabelNamesPopup.scss";
 import { GenericYesNoPopup } from "../GenericYesNoPopup/GenericYesNoPopup";
 import { PopupWindowType } from "../../../data/enums/PopupWindowType";
-import {
-  updateActiveLabelNameIndex,
-  updateLabelNamesList,
-} from "../../../store/editor/actionCreators";
+import { updateActiveLabelNameIndex, updateLabelNamesList } from "../../../store/editor/actionCreators";
 import { updateActivePopupType } from "../../../store/general/actionCreators";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -45,9 +42,7 @@ const InsertLabelNamesPopup: React.FC<IProps> = ({
         <TextInput
           key={key}
           isPassword={false}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            onChange(key, event.target.value)
-          }
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(key, event.target.value)}
           label={"标注名称"}
         />
         <ImageButton
@@ -74,7 +69,19 @@ const InsertLabelNamesPopup: React.FC<IProps> = ({
   };
 
   const extractLabelNamesList = (): string[] => {
-    return Object.values(labelNames).filter(value => !!value) as string[];
+    const labelNameList: string[] = Object.values(labelNames).filter(value => !!value) as string[];
+    // const defaultLabelList: string[] = [
+    //   "头顶",
+    //   "左手心",
+    //   "右手心",
+    //   "左脚跟",
+    //   "左脚尖",
+    //   "右脚跟",
+    //   "右脚尖",
+    // ];
+
+    // return defaultLabelList.concat(labelNameList);
+    return labelNameList;
   };
 
   const onReject = () => {
@@ -94,9 +101,7 @@ const InsertLabelNamesPopup: React.FC<IProps> = ({
           />
         </div>
         <div className="RightContainer">
-          <div className="Message">
-            在你开始之前，请创建一个即将用在你项目内的标签列表，点击左边的 + 号添加新标签
-          </div>
+          <div className="Message">在你开始之前，请创建一个即将用在你项目内的标签列表，点击左边的 + 号添加新标签</div>
           <div className="LabelsContainer">
             {Object.keys(labelNames).length !== 0 ? (
               <Scrollbars>
