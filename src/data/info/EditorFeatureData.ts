@@ -1,38 +1,38 @@
 export interface IEditorFeature {
-    displayText:string;
-    imageSrc:string;
-    imageAlt:string;
+  displayText: string;
+  imageSrc: string;
+  imageAlt: string;
 }
 
 export const EditorFeatureData: IEditorFeature[] = [
-    {
-        displayText: "Open source and free to use under GPLv3 license",
-        imageSrc: "img/open-source.png",
-        imageAlt: "open-source",
-    },
-    {
-        displayText: "No advanced installation required, just open up your browser",
-        imageSrc: "img/online.png",
-        imageAlt: "online",
-    },
-    {
-        displayText: "We don't store your images, because we don't send them anywhere",
-        imageSrc: "img/private.png",
-        imageAlt: "private",
-    },
-    {
-        displayText: "Support multiple label types - bounding box, polygon, point",
-        imageSrc: "img/labels.png",
-        imageAlt: "labels",
-    },
-    {
-        displayText: "Support output file formats like YOLO, VOC XML, VGG JSON, CSV",
-        imageSrc: "img/file.png",
-        imageAlt: "file",
-    },
-    {
-        displayText: "Support basic image operations like crop and resize",
-        imageSrc: "img/crop.png",
-        imageAlt: "crop",
-    },
+  {
+    displayText: "开源并且在GPLv3协议许可下免费使用",
+    imageSrc: "img/open-source.png",
+    imageAlt: "open-source",
+  },
+  {
+    displayText: "不需要额外安装，仅仅打开浏览器就可以开始工作",
+    imageSrc: "img/online.png",
+    imageAlt: "online",
+  },
+  {
+    displayText: "我们不存储你的图片",
+    imageSrc: "img/private.png",
+    imageAlt: "private",
+  },
+  {
+    displayText: "支持点、矩形、多边形标注",
+    imageSrc: "img/labels.png",
+    imageAlt: "labels",
+  },
+  {
+    displayText: "支持导出标注数据",
+    imageSrc: "img/file.png",
+    imageAlt: "file",
+  },
+  {
+    displayText: "支持裁剪和调整大小",
+    imageSrc: "img/crop.png",
+    imageAlt: "crop",
+  },
 ];

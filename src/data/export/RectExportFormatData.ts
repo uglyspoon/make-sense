@@ -1,17 +1,17 @@
-import {ExportFormatType} from "../enums/ExportFormatType";
-import {IExportFormat} from "../../interfaces/IExportFormat";
+import { ExportFormatType } from "../enums/ExportFormatType";
+import { IExportFormat } from "../../interfaces/IExportFormat";
 
 export const RectExportFormatData: IExportFormat[] = [
-    {
-        type: ExportFormatType.YOLO,
-        label: "A .zip package containing files in YOLO format."
-    },
-    {
-        type: ExportFormatType.VOC,
-        label: "A .zip package containing files in VOC XML format."
-    },
-    {
-        type: ExportFormatType.CSV,
-        label: "Single CSV file."
-    }
+  {
+    type: ExportFormatType.YOLO,
+    label: "YOLO 格式的zip包",
+  },
+  {
+    type: ExportFormatType.VOC,
+    label: "XML 格式的zip包",
+  },
+  {
+    type: ExportFormatType.CSV,
+    label: "单一的CSV文件",
+  },
 ];

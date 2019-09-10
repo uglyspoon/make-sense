@@ -1,9 +1,9 @@
-import {ExportFormatType} from "../enums/ExportFormatType";
-import {IExportFormat} from "../../interfaces/IExportFormat";
+import { ExportFormatType } from "../enums/ExportFormatType";
+import { IExportFormat } from "../../interfaces/IExportFormat";
 
 export const PointExportFormatData: IExportFormat[] = [
-    {
-        type: ExportFormatType.CSV,
-        label: "Single CSV file."
-    }
+  {
+    type: ExportFormatType.CSV,
+    label: "单一的CSV文件",
+  },
 ];
