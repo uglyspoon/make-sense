@@ -1,6 +1,6 @@
 import { ExportFormatType } from "../../data/enums/ExportFormatType";
 import { IPoint } from "../../interfaces/IPoint";
-import { VGGFileData, VGGObject, VGGPolygon, VGGRegionsData } from "../../data/VGG/IVGG";
+import { VGGFileData, VGGObject, VGGRegionsData, VGGJSON } from "../../data/VGG/JSON";
 import { ImageData, LabelPolygon } from "../../store/editor/types";
 import { EditorSelector } from "../../store/selectors/EditorSelector";
 import { saveAs } from "file-saver";
@@ -84,15 +84,15 @@ export class AllLabelsExporter {
     );
   }
 
-  public static mapPolygonToVGG(path: IPoint[]): VGGPolygon {
+  public static mapPolygonToVGG(path: IPoint[]): VGGJSON {
     if (!path || !path.length) return null;
-
-    const all_points_x: number[] = path.map((point: IPoint) => point.x).concat(path[0].x);
-    const all_points_y: number[] = path.map((point: IPoint) => point.y).concat(path[0].y);
+    const all_points: string[] = path
+      .map((point: IPoint) => `(${point.x}, ${point.y})`)
+      .concat(`(${path[0].x}, ${path[0].y})`);
+    // console.log("all_points_x", all_points_x, path.map((point: IPoint) => point.x));
     return {
       name: "polygon",
-      all_points_x,
-      all_points_y,
+      all_points,
     };
   }
 }

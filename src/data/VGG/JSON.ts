@@ -8,10 +8,9 @@ export interface VGGRect extends VGGShape {
   height: number;
 }
 
-export interface VGGPolygon extends VGGShape {
+export interface VGGJSON extends VGGShape {
   name: string;
-  all_points_x: number[];
-  all_points_y: number[];
+  all_points: string[];
 }
 
 export interface VGGRegion {
