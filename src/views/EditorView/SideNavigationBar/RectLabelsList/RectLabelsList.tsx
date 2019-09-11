@@ -13,12 +13,13 @@ import { connect } from "react-redux";
 import * as _ from "lodash";
 import LabelInputField from "../LabelInputField/LabelInputField";
 import EmptyLabelList from "../EmptyLabelList/EmptyLabelList";
+import { EditorSelector } from "../../../../store/selectors/EditorSelector";
+import produce from "immer";
 
 interface IProps {
   size: ISize;
   imageData: ImageData;
   updateImageDataById: (id: string, newImageData: ImageData) => any;
-  activeLabelIndex: number;
   activeLabelId: string;
   highlightedLabelId: string;
   updateActiveLabelNameIndex: (activeLabelIndex: number) => any;
@@ -36,6 +37,8 @@ const RectLabelsList: React.FC<IProps> = ({
   highlightedLabelId,
   updateActiveLabelId,
 }) => {
+  const labelRects = EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].labelRects;
+
   const labelInputFieldHeight = 40;
   const listStyle: React.CSSProperties = {
     width: size.width,
@@ -43,23 +46,30 @@ const RectLabelsList: React.FC<IProps> = ({
   };
   const listStyleContent: React.CSSProperties = {
     width: size.width,
-    height: imageData.labelRects.length * labelInputFieldHeight,
+    height: labelRects.length * labelInputFieldHeight,
   };
 
   const deleteRectLabelById = (labelRectId: string) => {
-    const newImageData = {
-      ...imageData,
-      labelRects: _.filter(imageData.labelRects, (currentLabel: LabelRect) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelRects = labelRects.filter((currentLabel: LabelRect) => {
         return currentLabel.id !== labelRectId;
-      }),
-    };
+      });
+    });
+    updateImageDataById(imageData.id, newImageData);
+  };
+
+  const checkRectLabelById = (labelRectId: string) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelRects = labelRects.map((currentLabel: LabelRect) => {
+        return currentLabel.id !== labelRectId ? currentLabel : { ...currentLabel, checked: !currentLabel.checked };
+      });
+    });
     updateImageDataById(imageData.id, newImageData);
   };
 
   const updateRectLabel = (labelRectId: string, labelNameIndex: number) => {
-    const newImageData = {
-      ...imageData,
-      labelRects: imageData.labelRects.map((labelRect: LabelRect) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelRects = labelRects.map((labelRect: LabelRect) => {
         if (labelRect.id === labelRectId) {
           return {
             ...labelRect,
@@ -68,8 +78,8 @@ const RectLabelsList: React.FC<IProps> = ({
         } else {
           return labelRect;
         }
-      }),
-    };
+      });
+    });
     updateImageDataById(imageData.id, newImageData);
     updateActiveLabelNameIndex(labelNameIndex);
   };
@@ -79,7 +89,7 @@ const RectLabelsList: React.FC<IProps> = ({
   };
 
   const getChildren = () => {
-    return imageData.labelRects.map((labelRect: LabelRect) => {
+    return labelRects.map((labelRect: LabelRect) => {
       return (
         <LabelInputField
           size={{
@@ -91,9 +101,11 @@ const RectLabelsList: React.FC<IProps> = ({
           id={labelRect.id}
           key={labelRect.id}
           onDelete={deleteRectLabelById}
+          onCheck={checkRectLabelById}
           value={labelRect.labelIndex !== null ? labelNames[labelRect.labelIndex] : null}
           options={labelNames}
           onSelectLabel={updateRectLabel}
+          checked={labelRect.checked}
         />
       );
     });
@@ -101,8 +113,8 @@ const RectLabelsList: React.FC<IProps> = ({
 
   return (
     <div className="RectLabelsList" style={listStyle} onClickCapture={onClickHandler}>
-      {imageData.labelRects.length === 0 ? (
-        <EmptyLabelList labelBefore={"创建第一个矩形"} labelAfter={"还没有任何的矩形标记"} />
+      {labelRects.length === 0 ? (
+        <EmptyLabelList labelBefore={"Draw the first rect"} labelAfter={"No labels created for this image"} />
       ) : (
         <Scrollbars>
           <div className="RectLabelsListContent" style={listStyleContent}>
@@ -121,9 +133,8 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-  activeLabelIndex: state.editor.activeLabelNameIndex,
-  activeLabelId: state.editor.activeLabelId,
-  highlightedLabelId: state.editor.highlightedLabelId,
+  activeLabelId: EditorSelector.getActiveLabelId(),
+  highlightedLabelId: EditorSelector.getHighlightedLabelId(),
   labelNames: state.editor.labelNames,
 });
 

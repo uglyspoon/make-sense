@@ -13,12 +13,13 @@ import { connect } from "react-redux";
 import * as _ from "lodash";
 import LabelInputField from "../LabelInputField/LabelInputField";
 import EmptyLabelList from "../EmptyLabelList/EmptyLabelList";
+import { EditorSelector } from "../../../../store/selectors/EditorSelector";
+import produce from "immer";
 
 interface IProps {
   size: ISize;
   imageData: ImageData;
   updateImageDataById: (id: string, newImageData: ImageData) => any;
-  activeLabelIndex: number;
   activeLabelId: string;
   highlightedLabelId: string;
   updateActiveLabelNameIndex: (activeLabelIndex: number) => any;
@@ -36,6 +37,8 @@ const PolygonLabelsList: React.FC<IProps> = ({
   highlightedLabelId,
   updateActiveLabelId,
 }) => {
+  const labelPolygons = EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()]
+    .labelPolygons;
   const labelInputFieldHeight = 40;
   const listStyle: React.CSSProperties = {
     width: size.width,
@@ -43,32 +46,40 @@ const PolygonLabelsList: React.FC<IProps> = ({
   };
   const listStyleContent: React.CSSProperties = {
     width: size.width,
-    height: imageData.labelPolygons.length * labelInputFieldHeight,
+    height: labelPolygons.length * labelInputFieldHeight,
   };
 
   const deletePolygonLabelById = (labelPolygonId: string) => {
-    const newImageData = {
-      ...imageData,
-      labelPolygons: _.filter(imageData.labelPolygons, (currentLabel: LabelPolygon) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelPolygons = labelPolygons.filter((currentLabel: LabelPolygon) => {
         return currentLabel.id !== labelPolygonId;
-      }),
-    };
+      });
+    });
+    updateImageDataById(imageData.id, newImageData);
+  };
+
+  const checkPolygonLabelById = (labelPolygonId: string) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelPolygons = labelPolygons.map((currentLabel: LabelPolygon) => {
+        return currentLabel.id !== labelPolygonId ? currentLabel : { ...currentLabel, checked: !currentLabel.checked };
+      });
+    });
     updateImageDataById(imageData.id, newImageData);
   };
 
   const updatePolygonLabel = (labelPolygonId: string, labelNameIndex: number) => {
-    const newImageData = {
-      ...imageData,
-      labelPolygons: imageData.labelPolygons.map((currentLabel: LabelPolygon) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelPolygons = labelPolygons.map((currentLabel: LabelPolygon) => {
         if (currentLabel.id === labelPolygonId) {
           return {
             ...currentLabel,
             labelIndex: labelNameIndex,
           };
+        } else {
+          return currentLabel;
         }
-        return currentLabel;
-      }),
-    };
+      });
+    });
     updateImageDataById(imageData.id, newImageData);
     updateActiveLabelNameIndex(labelNameIndex);
   };
@@ -78,7 +89,7 @@ const PolygonLabelsList: React.FC<IProps> = ({
   };
 
   const getChildren = () => {
-    return imageData.labelPolygons.map((labelPolygon: LabelPolygon) => {
+    return labelPolygons.map((labelPolygon: LabelPolygon) => {
       return (
         <LabelInputField
           size={{
@@ -93,6 +104,8 @@ const PolygonLabelsList: React.FC<IProps> = ({
           value={labelPolygon.labelIndex !== null ? labelNames[labelPolygon.labelIndex] : null}
           options={labelNames}
           onSelectLabel={updatePolygonLabel}
+          onCheck={checkPolygonLabelById}
+          checked={labelPolygon.checked}
         />
       );
     });
@@ -100,8 +113,8 @@ const PolygonLabelsList: React.FC<IProps> = ({
 
   return (
     <div className="PolygonLabelsList" style={listStyle} onClickCapture={onClickHandler}>
-      {imageData.labelPolygons.length === 0 ? (
-        <EmptyLabelList labelBefore={"标记第一个多边形"} labelAfter={"这张图片还没有多边形标记"} />
+      {labelPolygons.length === 0 ? (
+        <EmptyLabelList labelBefore={"Mark the first polygon"} labelAfter={"No labels created for this image"} />
       ) : (
         <Scrollbars>
           <div className="PolygonLabelsListContent" style={listStyleContent}>
@@ -120,9 +133,8 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-  activeLabelIndex: state.editor.activeLabelNameIndex,
-  activeLabelId: state.editor.activeLabelId,
-  highlightedLabelId: state.editor.highlightedLabelId,
+  activeLabelId: EditorSelector.getActiveLabelId(),
+  highlightedLabelId: EditorSelector.getHighlightedLabelId(),
   labelNames: state.editor.labelNames,
 });
 

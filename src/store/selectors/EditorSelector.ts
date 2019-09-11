@@ -1,70 +1,85 @@
-import {store} from "../..";
-import {ImageData, LabelPoint, LabelPolygon, LabelRect} from "../editor/types";
+import { store } from "../..";
+import { ImageData, LabelPoint, LabelPolygon, LabelRect } from "../editor/types";
 import _ from "lodash";
+import { LabelType } from "../../data/enums/LabelType";
 
 export class EditorSelector {
-    public static getProjectName(): string {
-        return store.getState().editor.projectName;
-    }
+  public static getProjectName(): string {
+    return store.getState().editor.projectName;
+  }
 
-    public static getLabelNames(): string[] {
-        return store.getState().editor.labelNames;
-    }
+  public static getLabelNames(): string[] {
+    return store.getState().editor.labelNames;
+  }
 
-    public static getActiveLabelNameIndex(): number {
-        return store.getState().editor.activeLabelNameIndex;
-    }
+  public static getActiveImageIndex(): number {
+    return store.getState().editor.activeImageIndex;
+  }
 
-    public static getImagesData(): ImageData[] {
-        return store.getState().editor.imagesData;
-    }
+  public static getActiveGroupIndex(): number {
+    return store.getState().editor.imagesData[this.getActiveImageIndex()].activeGroupIndex;
+  }
 
-    public static getActiveImageIndex(): number {
-        return store.getState().editor.activeImageIndex;
-    }
+  public static getActiveLabelNameIndex(): number {
+    return store.getState().editor.imagesData[this.getActiveImageIndex()].groupList[this.getActiveGroupIndex()]
+      .activeLabelNameIndex;
+  }
 
-    public static getActiveImageData(): ImageData | null {
-        const activeImageIndex: number | null = EditorSelector.getActiveImageIndex();
+  public static getImagesData(): ImageData[] {
+    return store.getState().editor.imagesData;
+  }
 
-        if (activeImageIndex === null)
-            return null;
+  public static getActiveImageData(): ImageData | null {
+    let activeImageIndex: number | null = EditorSelector.getActiveImageIndex();
 
-        const imagesData: ImageData[] = EditorSelector.getImagesData();
-        return imagesData[activeImageIndex];
-    }
+    if (activeImageIndex === null) return null;
 
-    public static getActiveLabelId(): string | null {
-        return store.getState().editor.activeLabelId;
-    }
+    let imagesData: ImageData[] = EditorSelector.getImagesData();
+    return imagesData[activeImageIndex];
+  }
 
-    public static getHighlightedLabelId(): string | null {
-        return store.getState().editor.highlightedLabelId;
-    }
+  public static getActiveLabelId(): string | null {
+    return store.getState().editor.imagesData[this.getActiveImageIndex()].groupList[this.getActiveGroupIndex()]
+      .activeLabelId;
+  }
 
-    public static getActiveRectLabel(): LabelRect | null {
-        const activeLabelId: string | null = EditorSelector.getActiveLabelId();
+  public static getHighlightedLabelId(): string | null {
+    return store.getState().editor.imagesData[this.getActiveImageIndex()].groupList[this.getActiveGroupIndex()]
+      .highlightedLabelId;
+  }
 
-        if (activeLabelId === null)
-            return null;
+  public static getActiveRectLabel(): LabelRect | null {
+    let activeLabelId: string | null = EditorSelector.getActiveLabelId();
+    let activeGroupIndex: number | null = EditorSelector.getActiveGroupIndex();
 
-        return _.find(EditorSelector.getActiveImageData().labelRects, {id: activeLabelId});
-    }
+    if (activeLabelId === null) return null;
 
-    public static getActivePointLabel(): LabelPoint | null {
-        const activeLabelId: string | null = EditorSelector.getActiveLabelId();
+    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelRects, { id: activeLabelId });
+  }
 
-        if (activeLabelId === null)
-            return null;
+  public static getActivePointLabel(): LabelPoint | null {
+    let activeLabelId: string | null = EditorSelector.getActiveLabelId();
+    let activeGroupIndex: number | null = EditorSelector.getActiveGroupIndex();
 
-        return _.find(EditorSelector.getActiveImageData().labelPoints, {id: activeLabelId});
-    }
+    if (activeLabelId === null) return null;
 
-    public static getActivePolygonLabel(): LabelPolygon | null {
-        const activeLabelId: string | null = EditorSelector.getActiveLabelId();
+    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPoints, { id: activeLabelId });
+  }
 
-        if (activeLabelId === null)
-            return null;
+  public static getActivePolygonLabel(): LabelPolygon | null {
+    let activeLabelId: string | null = EditorSelector.getActiveLabelId();
+    let activeGroupIndex: number | null = EditorSelector.getActiveGroupIndex();
 
-        return _.find(EditorSelector.getActiveImageData().labelPolygons, {id: activeLabelId});
-    }
+    if (activeLabelId === null) return null;
+
+    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPolygons, { id: activeLabelId });
+  }
+
+  public static getActiveLabelType(): LabelType {
+    return EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].activeLabelType;
+  }
+
+  public static getFirstLabelCreatedFlag(): boolean {
+    return EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].firstLabelCreatedFlag;
+  }
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./ImagesDropZone.scss";
 import { useDropzone } from "react-dropzone";
 import { TextButton } from "../../Common/TextButton/TextButton";

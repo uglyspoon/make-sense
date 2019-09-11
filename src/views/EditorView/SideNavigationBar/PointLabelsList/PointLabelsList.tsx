@@ -13,12 +13,13 @@ import { connect } from "react-redux";
 import * as _ from "lodash";
 import LabelInputField from "../LabelInputField/LabelInputField";
 import EmptyLabelList from "../EmptyLabelList/EmptyLabelList";
+import { EditorSelector } from "../../../../store/selectors/EditorSelector";
+import produce from "immer";
 
 interface IProps {
   size: ISize;
   imageData: ImageData;
   updateImageDataById: (id: string, newImageData: ImageData) => any;
-  activeLabelIndex: number;
   activeLabelId: string;
   highlightedLabelId: string;
   updateActiveLabelNameIndex: (activeLabelIndex: number) => any;
@@ -36,6 +37,7 @@ const PointLabelsList: React.FC<IProps> = ({
   highlightedLabelId,
   updateActiveLabelId,
 }) => {
+  const labelPoints = EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].labelPoints;
   const labelInputFieldHeight = 40;
   const listStyle: React.CSSProperties = {
     width: size.width,
@@ -43,32 +45,40 @@ const PointLabelsList: React.FC<IProps> = ({
   };
   const listStyleContent: React.CSSProperties = {
     width: size.width,
-    height: imageData.labelPoints.length * labelInputFieldHeight,
+    height: labelPoints.length * labelInputFieldHeight,
   };
 
   const deletePointLabelById = (labelPointId: string) => {
-    const newImageData = {
-      ...imageData,
-      labelPoints: _.filter(imageData.labelPoints, (currentLabel: LabelPoint) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelPoints = labelPoints.filter((currentLabel: LabelPoint) => {
         return currentLabel.id !== labelPointId;
-      }),
-    };
+      });
+    });
+    updateImageDataById(imageData.id, newImageData);
+  };
+
+  const checkPointLabelById = (labelPointId: string) => {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelPoints = labelPoints.map((currentLabel: LabelPoint) => {
+        return currentLabel.id !== labelPointId ? currentLabel : { ...currentLabel, checked: !currentLabel.checked };
+      });
+    });
     updateImageDataById(imageData.id, newImageData);
   };
 
   const updatePointLabel = (labelPointId: string, labelNameIndex: number) => {
-    const newImageData = {
-      ...imageData,
-      labelPoints: imageData.labelPoints.map((labelPoint: LabelPoint) => {
-        if (labelPoint.id === labelPointId) {
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[imageData.activeGroupIndex].labelPoints = labelPoints.map((currentLabel: LabelPoint) => {
+        if (currentLabel.id === labelPointId) {
           return {
-            ...labelPoint,
+            ...currentLabel,
             labelIndex: labelNameIndex,
           };
+        } else {
+          return currentLabel;
         }
-        return labelPoint;
-      }),
-    };
+      });
+    });
     updateImageDataById(imageData.id, newImageData);
     updateActiveLabelNameIndex(labelNameIndex);
   };
@@ -78,7 +88,7 @@ const PointLabelsList: React.FC<IProps> = ({
   };
 
   const getChildren = () => {
-    return imageData.labelPoints.map((labelPoint: LabelPoint) => {
+    return labelPoints.map((labelPoint: LabelPoint) => {
       return (
         <LabelInputField
           size={{
@@ -93,6 +103,8 @@ const PointLabelsList: React.FC<IProps> = ({
           value={labelPoint.labelIndex !== null ? labelNames[labelPoint.labelIndex] : null}
           options={labelNames}
           onSelectLabel={updatePointLabel}
+          onCheck={checkPointLabelById}
+          checked={labelPoint.checked}
         />
       );
     });
@@ -100,8 +112,8 @@ const PointLabelsList: React.FC<IProps> = ({
 
   return (
     <div className="PointLabelsList" style={listStyle} onClickCapture={onClickHandler}>
-      {imageData.labelPoints.length === 0 ? (
-        <EmptyLabelList labelBefore={"标记第一个点"} labelAfter={"这张图片还没有点标记"} />
+      {labelPoints.length === 0 ? (
+        <EmptyLabelList labelBefore={"Mark the first point"} labelAfter={"No labels created for this image"} />
       ) : (
         <Scrollbars>
           <div className="PointLabelsListContent" style={listStyleContent}>
@@ -119,12 +131,13 @@ const mapDispatchToProps = {
   updateActiveLabelId,
 };
 
-const mapStateToProps = (state: AppState) => ({
-  activeLabelIndex: state.editor.activeLabelNameIndex,
-  activeLabelId: state.editor.activeLabelId,
-  highlightedLabelId: state.editor.highlightedLabelId,
-  labelNames: state.editor.labelNames,
-});
+const mapStateToProps = (state: AppState) => {
+  return {
+    activeLabelId: EditorSelector.getActiveLabelId(),
+    highlightedLabelId: EditorSelector.getHighlightedLabelId(),
+    labelNames: state.editor.labelNames,
+  };
+};
 
 export default connect(
   mapStateToProps,

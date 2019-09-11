@@ -44,7 +44,7 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
       <div className="Footer">
         {!skipRejectButton && (
           <TextButton
-            label={!!rejectLabel ? rejectLabel : "NO, THANKS"}
+            label={!!rejectLabel ? rejectLabel : "不, 谢谢"}
             onClick={onReject}
             externalClassName={"reject"}
             isDisabled={disableRejectButton}
@@ -52,7 +52,7 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
         )}
         {!skipAcceptButton && (
           <TextButton
-            label={!!acceptLabel ? acceptLabel : "YES"}
+            label={!!acceptLabel ? acceptLabel : "好的"}
             onClick={onAccept}
             externalClassName={"accept"}
             isDisabled={disableAcceptButton}

@@ -8,10 +8,7 @@ import { IPoint } from "../../../../interfaces/IPoint";
 import { RectUtil } from "../../../../utils/RectUtil";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
-import {
-  updateActiveLabelId,
-  updateHighlightedLabelId,
-} from "../../../../store/editor/actionCreators";
+import { updateActiveLabelId, updateHighlightedLabelId } from "../../../../store/editor/actionCreators";
 import Scrollbars from "react-custom-scrollbars";
 
 interface IProps {
@@ -20,8 +17,10 @@ interface IProps {
   isHighlighted: boolean;
   id: string;
   value: string;
+  checked: boolean;
   options: string[];
   onDelete: (id: string) => any;
+  onCheck: (id: string) => any;
   onSelectLabel: (labelRectId: string, labelNameIndex: number) => any;
   updateHighlightedLabelId: (highlightedLabelId: string) => any;
   updateActiveLabelId: (highlightedLabelId: string) => any;
@@ -84,8 +83,7 @@ class LabelInputField extends React.Component<IProps, IState> {
 
   private getDropdownStyle = (): React.CSSProperties => {
     const clientRect = this.dropdownLabel.getBoundingClientRect();
-    const height: number =
-      Math.min(this.props.options.length, this.dropdownOptionCount) * this.dropdownOptionHeight;
+    const height: number = Math.min(this.props.options.length, this.dropdownOptionCount) * this.dropdownOptionHeight;
     const style = {
       width: clientRect.width,
       height: height,
@@ -134,7 +132,7 @@ class LabelInputField extends React.Component<IProps, IState> {
   };
 
   public render() {
-    const { size, id, value, onDelete } = this.props;
+    const { size, id, value, onDelete, onCheck, checked } = this.props;
 
     return (
       <div
@@ -158,26 +156,18 @@ class LabelInputField extends React.Component<IProps, IState> {
           <div className="Marker" />
           <div className="Content">
             <div className="ContentWrapper">
-              <div
-                className="DropdownLabel"
-                ref={ref => (this.dropdownLabel = ref)}
-                onClick={this.openDropdown}
-              >
+              <div className="DropdownLabel" ref={ref => (this.dropdownLabel = ref)} onClick={this.openDropdown}>
                 {value ? value : "选择一个标签"}
               </div>
               {this.state.isOpen && (
-                <div
-                  className="Dropdown"
-                  style={this.getDropdownStyle()}
-                  ref={ref => (this.dropdown = ref)}
-                >
+                <div className="Dropdown" style={this.getDropdownStyle()} ref={ref => (this.dropdown = ref)}>
                   <Scrollbars>
                     <div>{this.getDropdownOptions()}</div>
                   </Scrollbars>
                 </div>
               )}
             </div>
-            <input type="checkbox" />
+            <input type="checkbox" onClick={() => onCheck(id)} checked={checked} onChange={() => {}} />
             <div className="ContentWrapper">
               <ImageButton
                 externalClassName={"trash"}

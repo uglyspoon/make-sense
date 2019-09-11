@@ -112,19 +112,19 @@ export function updateFirstLabelCreatedFlag(firstLabelCreatedFlag: boolean) {
   };
 }
 
-export function updatePersonList(personName: string) {
+export function updateGroupList(groupName: string) {
   return {
-    type: Action.UPDATE_PERSON_LIST,
+    type: Action.UPDATE_GROUP_LIST,
     payload: {
-      personName,
+      groupName,
     },
   };
 }
-export function updateActivePersonIndex(personIndex: number) {
+export function updateActiveGroupIndex(groupIndex: number) {
   return {
-    type: Action.UPDATE_ACTIVE_PERSON_INDEX,
+    type: Action.UPDATE_ACTIVE_GROUP_INDEX,
     payload: {
-      personIndex,
+      groupIndex,
     },
   };
 }

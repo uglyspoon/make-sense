@@ -6,21 +6,21 @@ import { EditorSelector } from "../../store/selectors/EditorSelector";
 import { saveAs } from "file-saver";
 import { ExporterUtil } from "../../utils/ExporterUtil";
 
-export class PolygonLabelsExporter {
+export class AllLabelsExporter {
   public static export(exportFormatType: ExportFormatType): void {
     switch (exportFormatType) {
-      case ExportFormatType.VGG_JSON:
-        PolygonLabelsExporter.exportAsVGGJson();
+      case ExportFormatType.JSON:
+        AllLabelsExporter.exportAsJson();
         break;
       default:
         return;
     }
   }
 
-  private static exportAsVGGJson(): void {
+  private static exportAsJson(): void {
     const imagesData: ImageData[] = EditorSelector.getImagesData();
     const labelNames: string[] = EditorSelector.getLabelNames();
-    const content: string = JSON.stringify(PolygonLabelsExporter.mapImagesDataToVGGObject(imagesData, labelNames));
+    const content: string = JSON.stringify(AllLabelsExporter.mapImagesDataToVGGObject(imagesData, labelNames));
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     try {
       saveAs(blob, `${ExporterUtil.getExportFileName()}.json`);
@@ -32,7 +32,7 @@ export class PolygonLabelsExporter {
 
   private static mapImagesDataToVGGObject(imagesData: ImageData[], labelNames: string[]): VGGObject {
     return imagesData.reduce((data: VGGObject, image: ImageData) => {
-      const fileData: VGGFileData = PolygonLabelsExporter.mapImageDataToVGGFileData(image, labelNames);
+      const fileData: VGGFileData = AllLabelsExporter.mapImageDataToVGGFileData(image, labelNames);
       if (!!fileData) {
         data[image.fileData.name] = fileData;
       }
@@ -41,7 +41,7 @@ export class PolygonLabelsExporter {
   }
 
   private static mapImageDataToVGGFileData(imageData: ImageData, labelNames: string[]): VGGFileData {
-    const regionsData: VGGRegionsData = PolygonLabelsExporter.mapImageDataToVGG(imageData, labelNames);
+    const regionsData: VGGRegionsData = AllLabelsExporter.mapImageDataToVGG(imageData, labelNames);
     if (!regionsData) return null;
     return {
       fileref: "",
@@ -63,13 +63,13 @@ export class PolygonLabelsExporter {
     )
       return null;
 
-    const validLabels: LabelPolygon[] = PolygonLabelsExporter.getValidPolygonLabels(imageData);
+    const validLabels: LabelPolygon[] = AllLabelsExporter.getValidPolygonLabels(imageData);
 
     if (!validLabels.length) return null;
 
     return validLabels.reduce((data: VGGRegionsData, label: LabelPolygon, index: number) => {
       data[`${index}`] = {
-        shape_attributes: PolygonLabelsExporter.mapPolygonToVGG(label.vertices),
+        shape_attributes: AllLabelsExporter.mapPolygonToVGG(label.vertices),
         region_attributes: {
           label: labelNames[label.labelIndex],
         },

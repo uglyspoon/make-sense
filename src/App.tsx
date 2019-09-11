@@ -19,14 +19,10 @@ interface IProps {
 
 const App: React.FC<IProps> = ({ projectType, windowSize }) => {
   const selectRoute = () => {
-    if (!!PlatformModel.mobileDeviceData.manufacturer && !!PlatformModel.mobileDeviceData.os)
-      return <MobileMainView />;
+    if (!!PlatformModel.mobileDeviceData.manufacturer && !!PlatformModel.mobileDeviceData.os) return <MobileMainView />;
     if (!projectType) return <MainView />;
     else {
-      if (
-        windowSize.height < Settings.EDITOR_MIN_HEIGHT ||
-        windowSize.width < Settings.EDITOR_MIN_WIDTH
-      ) {
+      if (windowSize.height < Settings.EDITOR_MIN_HEIGHT || windowSize.width < Settings.EDITOR_MIN_WIDTH) {
         return <SizeItUpView />;
       } else {
         return <EditorView />;

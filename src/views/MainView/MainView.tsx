@@ -53,12 +53,7 @@ const MainView: React.FC = () => {
           placement="left"
         >
           <div>
-            <ImageButton
-              size={size}
-              image={data.imageSrc}
-              imageAlt={data.imageAlt}
-              href={data.href}
-            />
+            <ImageButton size={size} image={data.imageSrc} imageAlt={data.imageAlt} href={data.href} />
           </div>
         </DarkTooltip>
       );

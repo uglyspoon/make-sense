@@ -7,43 +7,55 @@ import { IPoint } from "../../interfaces/IPoint";
 export type LabelRect = {
   id: string;
   labelIndex: number;
+  checked: boolean;
   rect: IRect;
 };
 
 export type LabelPoint = {
   id: string;
   labelIndex: number;
+  checked: boolean;
   point: IPoint;
 };
 
 export type LabelPolygon = {
   id: string;
   labelIndex: number;
+  checked: boolean;
   vertices: IPoint[];
 };
 
-export type ImageData = {
-  id: string;
-  fileData: File;
-  loadStatus: boolean;
+export type LabelData = {
   labelRects: LabelRect[];
   labelPoints: LabelPoint[];
   labelPolygons: LabelPolygon[];
 };
 
+export type ImageData = {
+  id: string;
+  loadStatus: boolean;
+  fileData: File;
+  activeGroupIndex: number;
+  groupList: GroupType[];
+};
+
 export type EditorState = {
-  activeImageIndex: number;
-  activeLabelNameIndex: number;
-  activeLabelType: LabelType;
-  activeLabelId: string;
-  highlightedLabelId: string;
   projectType: ProjectType;
   projectName: string;
   imagesData: ImageData[];
   labelNames: string[];
+  activeImageIndex: number;
+};
+
+export type GroupType = {
+  activeLabelNameIndex: number;
+  activeLabelType: LabelType;
+  activeLabelId: string;
+  highlightedLabelId: string;
   firstLabelCreatedFlag: boolean;
-  personList: string[];
-  activePersonIndex: number;
+  labelRects: LabelRect[];
+  labelPoints: LabelPoint[];
+  labelPolygons: LabelPolygon[];
 };
 
 interface UpdateProjectType {
@@ -103,6 +115,14 @@ interface UpdateImageDataById {
   };
 }
 
+interface UpdateGroupDataByIndex {
+  type: typeof Action.UPDATE_GROUP_DATA_BY_INDEX;
+  payload: {
+    index: number;
+    newGroupData: GroupType;
+  };
+}
+
 interface AddImageData {
   type: typeof Action.ADD_IMAGES_DATA;
   payload: {
@@ -131,17 +151,17 @@ interface UpdateFirstLabelCreatedFlag {
   };
 }
 
-interface UpdatePersonList {
-  type: typeof Action.UPDATE_PERSON_LIST;
+interface UpdateGroupList {
+  type: typeof Action.UPDATE_GROUP_LIST;
   payload: {
-    personName: string;
+    groupName: string;
   };
 }
 
-interface UpdateActivePersonIndex {
-  type: typeof Action.UPDATE_ACTIVE_PERSON_INDEX;
+interface UpdateActiveGroupIndex {
+  type: typeof Action.UPDATE_ACTIVE_GROUP_INDEX;
   payload: {
-    personIndex: number;
+    groupIndex: number;
   };
 }
 
@@ -158,5 +178,6 @@ export type EditorActionTypes =
   | UpdateActiveLabelId
   | UpdateHighlightedLabelId
   | UpdateFirstLabelCreatedFlag
-  | UpdatePersonList
-  | UpdateActivePersonIndex;
+  | UpdateGroupList
+  | UpdateActiveGroupIndex
+  | UpdateGroupDataByIndex;

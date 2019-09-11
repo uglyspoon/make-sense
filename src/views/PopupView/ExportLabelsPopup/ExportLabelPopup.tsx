@@ -8,15 +8,17 @@ import { RectLabelsExporter } from "../../../logic/export/RectLabelsExporter";
 import { LabelType } from "../../../data/enums/LabelType";
 import { ImageButton } from "../../Common/ImageButton/ImageButton";
 import { IExportFormat } from "../../../interfaces/IExportFormat";
-import { RectExportFormatData } from "../../../data/export/RectExportFormatData";
+import { AllExportFormatData } from "../../../data/export/AllExportFormatData";
 import { PointExportFormatData } from "../../../data/export/PointExportFormatData";
 import { PointLabelsExporter } from "../../../logic/export/PointLabelsExport";
+import { AllLabelsExporter } from "../../../logic/export/AllLabelsExport";
 import { PolygonExportFormatData } from "../../../data/export/PolygonExportFormatData";
 import { PolygonLabelsExporter } from "../../../logic/export/PolygonLabelsExporter";
 import { PopupActions } from "../../../logic/actions/PopupActions";
+import { RectExportFormatData } from "../../../data/export/RectExportFormatData";
 
 const ExportLabelPopup: React.FC = () => {
-  const [exportLabelType, setExportLabelType] = useState(LabelType.RECTANGLE);
+  const [exportLabelType, setExportLabelType] = useState(LabelType.ALL);
   const [exportFormatType, setExportFormatType] = useState(null);
 
   const onAccept = () => {
@@ -30,6 +32,9 @@ const ExportLabelPopup: React.FC = () => {
         break;
       case LabelType.POLYGON:
         PolygonLabelsExporter.export(exportFormatType);
+        break;
+      case LabelType.ALL:
+        AllLabelsExporter.export(exportFormatType);
         break;
     }
     PopupActions.close();
@@ -63,6 +68,17 @@ const ExportLabelPopup: React.FC = () => {
       <div className="ExportLabelPopupContent">
         <div className="LeftContainer">
           <ImageButton
+            image={"ico/all.png"}
+            imageAlt={"all"}
+            size={{ width: 40, height: 40 }}
+            padding={20}
+            onClick={() => {
+              setExportLabelType(LabelType.ALL);
+              setExportFormatType(null);
+            }}
+            isActive={exportLabelType === LabelType.ALL}
+          />
+          {/* <ImageButton
             image={"ico/rectangle.png"}
             imageAlt={"rectangle"}
             size={{ width: 40, height: 40 }}
@@ -94,11 +110,12 @@ const ExportLabelPopup: React.FC = () => {
               setExportFormatType(null);
             }}
             isActive={exportLabelType === LabelType.POLYGON}
-          />
+          /> */}
         </div>
         <div className="RightContainer">
           <div className="Message">选择标注类型和导出文件格式</div>
           <div className="Options">
+            {exportLabelType === LabelType.ALL && getOptions(AllExportFormatData)}
             {exportLabelType === LabelType.RECTANGLE && getOptions(RectExportFormatData)}
             {exportLabelType === LabelType.POINT && getOptions(PointExportFormatData)}
             {exportLabelType === LabelType.POLYGON && getOptions(PolygonExportFormatData)}

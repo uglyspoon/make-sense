@@ -5,8 +5,8 @@ import {
   updateActiveLabelId,
   updateActiveLabelType,
   updateImageDataById,
-  updatePersonList,
-  updateActivePersonIndex,
+  updateGroupList,
+  updateActiveGroupIndex,
 } from "../../../../store/editor/actionCreators";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
@@ -23,19 +23,21 @@ import PolygonLabelsList from "../PolygonLabelsList/PolygonLabelsList";
 import { ContextManager } from "../../../../logic/context/ContextManager";
 import { ContextType } from "../../../../data/enums/ContextType";
 import Scrollbars from "react-custom-scrollbars";
+import { GroupType } from "../../../../store/editor/types";
+import { EditorSelector } from "../../../../store/selectors/EditorSelector";
 
 interface IProps {
   activeImageIndex: number;
   activeLabelType: LabelType;
   imagesData: ImageData[];
   projectType: ProjectType;
-  personList: string[];
-  activePersonIndex: number;
+  groupList: GroupType[];
+  activeGroupIndex: number;
   updateImageDataById: (id: string, newImageData: ImageData) => any;
   updateActiveLabelType: (activeLabelType: LabelType) => any;
   updateActiveLabelId: (highlightedLabelId: string) => any;
-  updatePersonList: (personName: string) => any;
-  updateActivePersonIndex: (personIndex: number) => any;
+  updateGroupList: (groupName: string) => any;
+  updateActiveGroupIndex: (groupIndex: number) => any;
 }
 
 interface IState {
@@ -91,11 +93,11 @@ class LabelsToolkit extends React.Component<IProps, IState> {
     this.props.updateActiveLabelId(null);
   };
 
-  private renderChildren = (currentPersonIndex: number) => {
+  private renderChildren = (currentGroupIndex: number) => {
     const { activeLabelType, size } = this.state;
-    const { activeImageIndex, imagesData, activePersonIndex } = this.props;
+    const { activeImageIndex, imagesData, activeGroupIndex } = this.props;
     return this.tabs.reduce((children, labelType: LabelType, index: number) => {
-      const isActive: boolean = labelType === activeLabelType && activePersonIndex === currentPersonIndex;
+      const isActive: boolean = labelType === activeLabelType && activeGroupIndex === currentGroupIndex;
       const tabData: ILabelToolkit = _.find(LabelToolkitData, { labelType });
       // const activeTabContentHeight: number = size.height - this.tabs.length * Settings.TOOLKIT_TAB_HEIGHT_PX - 50 - 50;
       const activeTabContentHeight = 300;
@@ -164,20 +166,20 @@ class LabelsToolkit extends React.Component<IProps, IState> {
   };
 
   private buttonOnClickHandle = () => {
-    this.props.updatePersonList(`person-${this.props.personList.length + 1}`);
+    this.props.updateGroupList(`group-${this.props.groupList.length + 1}`);
   };
   private renderChildrenWrapper = () => {
-    const { personList, activePersonIndex } = this.props;
-    return personList
-      .map((personName, idx) => (
+    const { groupList, activeGroupIndex } = this.props;
+    return groupList
+      .map((groupName, idx) => (
         <div className="LabelsToolkitWrapper" key={`LabelsToolkitWrapper_` + idx}>
           <p
-            className={idx === activePersonIndex ? "active" : ""}
-            onClick={() => this.props.updateActivePersonIndex(idx)}
+            className={idx === activeGroupIndex ? "active" : ""}
+            onClick={() => this.props.updateActiveGroupIndex(idx)}
           >
-            {personName}
+            {`person-` + idx}
           </p>
-          {idx === activePersonIndex && this.renderChildren(idx)}
+          {idx === activeGroupIndex && this.renderChildren(idx)}
         </div>
       ))
       .concat(
@@ -205,17 +207,17 @@ const mapDispatchToProps = {
   updateImageDataById,
   updateActiveLabelType,
   updateActiveLabelId,
-  updatePersonList,
-  updateActivePersonIndex,
+  updateGroupList,
+  updateActiveGroupIndex,
 };
 
 const mapStateToProps = (state: AppState) => ({
   activeImageIndex: state.editor.activeImageIndex,
-  activeLabelType: state.editor.activeLabelType,
+  activeLabelType: EditorSelector.getActiveLabelType(),
   imagesData: state.editor.imagesData,
   projectType: state.editor.projectType,
-  personList: state.editor.personList,
-  activePersonIndex: state.editor.activePersonIndex,
+  groupList: EditorSelector.getActiveImageData().groupList,
+  activeGroupIndex: EditorSelector.getActiveGroupIndex(),
 });
 
 export default connect(
