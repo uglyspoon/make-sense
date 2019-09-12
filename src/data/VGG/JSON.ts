@@ -14,19 +14,20 @@ export interface VGGJSON extends VGGShape {
 }
 
 export interface VGGRegion {
-  shape_attributes: VGGShape;
-  region_attributes: { [key: string]: string };
+  // shape_attributes: VGGShape;
+  // region_attributes: { [key: string]: string };
+  label: string;
+  is_checked: string;
+  all_points: string[] | string;
+  type: string;
 }
 
 export type VGGRegionsData = { [key: string]: VGGRegion };
 
 export type VGGFileData = {
-  fileref: string;
   size: number;
   filename: string;
-  base64_img_data: string;
-  file_attributes: object;
-  regions: VGGRegionsData;
+  key_points: VGGRegionsData[];
 };
 
 export type VGGObject = { [key: string]: VGGFileData };

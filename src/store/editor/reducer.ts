@@ -1,21 +1,21 @@
-import { EditorActionTypes, EditorState, ImageData, GroupType, LabelData } from "./types";
+import { EditorActionTypes, EditorState, ImageData } from "./types";
 import { Action } from "../Actions";
 import produce from "immer";
 
-const defaultGroup: GroupType = {
-  activeLabelNameIndex: null,
-  activeLabelType: null,
-  activeLabelId: null,
-  highlightedLabelId: null,
-  firstLabelCreatedFlag: false,
-  labelRects: [],
-  labelPoints: [],
-  labelPolygons: [],
-};
+// const defaultGroup: GroupType = {
+//   activeLabelNameIndex: null,
+//   activeLabelType: null,
+//   activeLabelId: null,
+//   highlightedLabelId: null,
+//   firstLabelCreatedFlag: false,
+//   labelRects: [],
+//   labelPoints: [],
+//   labelPolygons: [],
+// };
 
 const initialState: EditorState = {
   activeImageIndex: 0,
-  projectName: "我的项目",
+  projectName: "my_project",
   imagesData: [],
   projectType: null,
   labelNames: ["头顶", "左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"],
@@ -26,7 +26,7 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
   const activeGroupIndex = state.imagesData[activeImageIndex]
     ? state.imagesData[activeImageIndex].activeGroupIndex
     : undefined;
-  return produce(state, draft => {
+  const result = produce(state, draft => {
     switch (action.type) {
       case Action.UPDATE_PROJECT_TYPE:
         draft.projectType = action.payload.projectType;
@@ -53,6 +53,7 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.UPDATE_IMAGE_DATA_BY_ID:
         //filter TODO
+        console.log("action.payload", action.payload);
         draft.imagesData = state.imagesData.map((imageData: ImageData) =>
           imageData.id === action.payload.id ? action.payload.newImageData : imageData
         );
@@ -71,11 +72,25 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
           action.payload.firstLabelCreatedFlag;
         break;
       case Action.UPDATE_GROUP_LIST:
-        draft.imagesData[activeImageIndex].groupList.push(defaultGroup);
+        draft.imagesData[activeImageIndex].groupList.push({
+          activeLabelNameIndex: null,
+          activeLabelType: null,
+          activeLabelId: null,
+          highlightedLabelId: null,
+          firstLabelCreatedFlag: false,
+          labelRects: [],
+          labelPoints: [],
+          labelPolygons: [],
+        });
         break;
       case Action.UPDATE_ACTIVE_GROUP_INDEX:
         draft.imagesData[activeImageIndex].activeGroupIndex = action.payload.groupIndex;
         break;
     }
   });
+  if (action.type === Action.UPDATE_GROUP_LIST) {
+    console.log("result", result);
+  }
+
+  return result;
 }

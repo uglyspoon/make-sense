@@ -1,7 +1,7 @@
 import { ExportFormatType } from "../../data/enums/ExportFormatType";
 import { IPoint } from "../../interfaces/IPoint";
 import { VGGFileData, VGGObject, VGGRegionsData, VGGJSON } from "../../data/VGG/JSON";
-import { ImageData, LabelPolygon } from "../../store/editor/types";
+import { ImageData, LabelPolygon, GroupType, LabelPoint } from "../../store/editor/types";
 import { EditorSelector } from "../../store/selectors/EditorSelector";
 import { saveAs } from "file-saver";
 import { ExporterUtil } from "../../utils/ExporterUtil";
@@ -31,7 +31,9 @@ export class AllLabelsExporter {
   }
 
   private static mapImagesDataToVGGObject(imagesData: ImageData[], labelNames: string[]): VGGObject {
+    console.log("imagesData", imagesData);
     return imagesData.reduce((data: VGGObject, image: ImageData) => {
+      console.log("data", data, image, imagesData);
       const fileData: VGGFileData = AllLabelsExporter.mapImageDataToVGGFileData(image, labelNames);
       if (!!fileData) {
         data[image.fileData.name] = fileData;
@@ -41,19 +43,16 @@ export class AllLabelsExporter {
   }
 
   private static mapImageDataToVGGFileData(imageData: ImageData, labelNames: string[]): VGGFileData {
-    const regionsData: VGGRegionsData = AllLabelsExporter.mapImageDataToVGG(imageData, labelNames);
-    if (!regionsData) return null;
+    const regionsDataArray: VGGRegionsData[] = AllLabelsExporter.mapImageDataToVGG(imageData, labelNames);
+    if (!regionsDataArray) return null;
     return {
-      fileref: "",
       size: imageData.fileData.size,
       filename: imageData.fileData.name,
-      base64_img_data: "",
-      file_attributes: {},
-      regions: regionsData,
+      key_points: regionsDataArray,
     };
   }
 
-  public static mapImageDataToVGG(imageData: ImageData, labelNames: string[]): VGGRegionsData {
+  public static mapImageDataToVGG(imageData: ImageData, labelNames: string[]): VGGRegionsData[] {
     if (
       !imageData.loadStatus ||
       !imageData.groupList[imageData.activeGroupIndex].labelPolygons ||
@@ -63,19 +62,52 @@ export class AllLabelsExporter {
     )
       return null;
 
-    const validLabels: LabelPolygon[] = AllLabelsExporter.getValidPolygonLabels(imageData);
+    const validPolygonLabelsArray: Array<LabelPolygon[]> = AllLabelsExporter.getValidPolygonLabelsArray(imageData);
 
-    if (!validLabels.length) return null;
+    let polygonsData = [];
+    if (validPolygonLabelsArray.length) {
+      polygonsData = validPolygonLabelsArray.map((validLabels: LabelPolygon[]) => {
+        return validLabels.reduce((data: VGGRegionsData, label: LabelPolygon, index: number) => {
+          data[`${index}`] = {
+            all_points: AllLabelsExporter.mapPolygonToVGG(label.vertices),
+            label: labelNames[label.labelIndex],
+            is_checked: label.checked ? "1" : "0",
+            type: "polygon",
+          };
+          return data;
+        }, {});
+      });
+    }
 
-    return validLabels.reduce((data: VGGRegionsData, label: LabelPolygon, index: number) => {
-      data[`${index}`] = {
-        shape_attributes: AllLabelsExporter.mapPolygonToVGG(label.vertices),
-        region_attributes: {
-          label: labelNames[label.labelIndex],
-        },
-      };
-      return data;
-    }, {});
+    const validPointLabelsArray: Array<LabelPoint[]> = AllLabelsExporter.getValidPointLabelsArray(imageData);
+    let pointsData = [];
+    if (validPointLabelsArray.length) {
+      pointsData = validPointLabelsArray.map((validLabels: LabelPoint[]) => {
+        return validLabels.reduce((data: VGGRegionsData, label: LabelPoint, index: number) => {
+          data[`${index}`] = {
+            all_points: `(${label.point.x}, ${label.point.y})`,
+            label: labelNames[label.labelIndex],
+            is_checked: label.checked ? "1" : "0",
+            type: "point",
+          };
+          return data;
+        }, {});
+      });
+    }
+
+    return polygonsData.concat(pointsData);
+  }
+
+  public static getValidPolygonLabelsArray(imageData: ImageData): LabelPolygon[][] {
+    return imageData.groupList.map((group: GroupType) => {
+      return group.labelPolygons.filter((label: LabelPolygon) => label.labelIndex !== null && !!label.vertices.length);
+    });
+  }
+
+  public static getValidPointLabelsArray(imageData: ImageData): LabelPoint[][] {
+    return imageData.groupList.map((group: GroupType) => {
+      return group.labelPoints.filter((label: LabelPoint) => label.labelIndex !== null && !!label.point);
+    });
   }
 
   public static getValidPolygonLabels(imageData: ImageData): LabelPolygon[] {
@@ -84,15 +116,11 @@ export class AllLabelsExporter {
     );
   }
 
-  public static mapPolygonToVGG(path: IPoint[]): VGGJSON {
+  public static mapPolygonToVGG(path: IPoint[]): string[] {
     if (!path || !path.length) return null;
     const all_points: string[] = path
       .map((point: IPoint) => `(${point.x}, ${point.y})`)
       .concat(`(${path[0].x}, ${path[0].y})`);
-    // console.log("all_points_x", all_points_x, path.map((point: IPoint) => point.x));
-    return {
-      name: "polygon",
-      all_points,
-    };
+    return all_points;
   }
 }
