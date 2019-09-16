@@ -197,7 +197,6 @@ export class PointRenderEngine extends BaseRenderEngine {
   }
 
   private addPointLabel = (point: IPoint) => {
-    console.log(123);
     const activeLabelIndex = EditorSelector.getActiveLabelNameIndex();
     const imageData: ImageData = EditorSelector.getActiveImageData();
     const labelPoint: LabelPoint = {

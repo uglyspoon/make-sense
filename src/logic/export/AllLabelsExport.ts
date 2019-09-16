@@ -1,6 +1,6 @@
 import { ExportFormatType } from "../../data/enums/ExportFormatType";
 import { IPoint } from "../../interfaces/IPoint";
-import { VGGFileData, VGGObject, VGGRegionsData, VGGJSON } from "../../data/VGG/JSON";
+import { VGGFileData, VGGObject, VGGRegionsData } from "../../data/VGG/JSON";
 import { ImageData, LabelPolygon, GroupType, LabelPoint } from "../../store/editor/types";
 import { EditorSelector } from "../../store/selectors/EditorSelector";
 import { saveAs } from "file-saver";

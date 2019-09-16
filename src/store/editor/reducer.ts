@@ -1,18 +1,6 @@
 import { EditorActionTypes, EditorState, ImageData } from "./types";
 import { Action } from "../Actions";
 import produce from "immer";
-
-// const defaultGroup: GroupType = {
-//   activeLabelNameIndex: null,
-//   activeLabelType: null,
-//   activeLabelId: null,
-//   highlightedLabelId: null,
-//   firstLabelCreatedFlag: false,
-//   labelRects: [],
-//   labelPoints: [],
-//   labelPolygons: [],
-// };
-
 const initialState: EditorState = {
   activeImageIndex: 0,
   projectName: "my_project",
@@ -53,7 +41,6 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.UPDATE_IMAGE_DATA_BY_ID:
         //filter TODO
-        console.log("action.payload", action.payload);
         draft.imagesData = state.imagesData.map((imageData: ImageData) =>
           imageData.id === action.payload.id ? action.payload.newImageData : imageData
         );
@@ -88,9 +75,5 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
     }
   });
-  if (action.type === Action.UPDATE_GROUP_LIST) {
-    console.log("result", result);
-  }
-
   return result;
 }

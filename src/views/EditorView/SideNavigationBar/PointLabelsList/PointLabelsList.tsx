@@ -113,7 +113,7 @@ const PointLabelsList: React.FC<IProps> = ({
   return (
     <div className="PointLabelsList" style={listStyle} onClickCapture={onClickHandler}>
       {labelPoints.length === 0 ? (
-        <EmptyLabelList labelBefore={"Mark the first point"} labelAfter={"No labels created for this image"} />
+        <EmptyLabelList labelBefore={"标记第一个点"} labelAfter={"这张图片还没有标注"} />
       ) : (
         <Scrollbars>
           <div className="PointLabelsListContent" style={listStyleContent}>

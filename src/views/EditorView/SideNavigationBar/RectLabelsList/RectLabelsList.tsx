@@ -114,7 +114,7 @@ const RectLabelsList: React.FC<IProps> = ({
   return (
     <div className="RectLabelsList" style={listStyle} onClickCapture={onClickHandler}>
       {labelRects.length === 0 ? (
-        <EmptyLabelList labelBefore={"Draw the first rect"} labelAfter={"No labels created for this image"} />
+        <EmptyLabelList labelBefore={"标记第一个矩形"} labelAfter={"这张图片还没有标注"} />
       ) : (
         <Scrollbars>
           <div className="RectLabelsListContent" style={listStyleContent}>

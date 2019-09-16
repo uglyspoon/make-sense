@@ -114,7 +114,7 @@ const PolygonLabelsList: React.FC<IProps> = ({
   return (
     <div className="PolygonLabelsList" style={listStyle} onClickCapture={onClickHandler}>
       {labelPolygons.length === 0 ? (
-        <EmptyLabelList labelBefore={"Mark the first polygon"} labelAfter={"No labels created for this image"} />
+        <EmptyLabelList labelBefore={"标注第一个多边形"} labelAfter={"这张图片还没有标注"} />
       ) : (
         <Scrollbars>
           <div className="PolygonLabelsListContent" style={listStyleContent}>
