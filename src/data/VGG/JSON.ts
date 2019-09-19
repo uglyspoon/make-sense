@@ -22,7 +22,7 @@ export interface VGGRegion {
   type: string;
 }
 
-export type VGGRegionsData = { [key: string]: VGGRegion };
+export type VGGRegionsData = { [key: string]: any };
 
 export type VGGFileData = {
   size: number;

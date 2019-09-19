@@ -208,7 +208,6 @@ export class PointRenderEngine extends BaseRenderEngine {
       .concat(allIndex)
       .filter(v => !existedLabelIndexs.includes(v) || !allIndex.includes(v));
 
-    console.log("difference", difference);
     if (difference.indexOf(null) !== -1) {
       difference.splice(difference.indexOf(null), 1);
     }

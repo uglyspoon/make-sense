@@ -47,17 +47,32 @@ export class AllLabelsExporter {
     const orderArray = ["头顶", "左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"];
     const tempArray = [];
     regionsDataArray.forEach(item => {
-      tempArray.push(
-        Object.values(item).sort((a, b) => {
-          return orderArray.indexOf(a.label as any) - orderArray.indexOf(b.label as any);
-        })
-      );
+      item = Object.values(item);
+      orderArray.forEach((ele, idx) => {
+        if (!item.some(r => r.label === ele)) {
+          item.push({
+            label: ele,
+            type: "point",
+            is_checked: null,
+            all_points: null,
+          });
+        }
+      });
+      const temp = item.sort((a, b) => {
+        return orderArray.indexOf(a.label as any) - orderArray.indexOf(b.label as any);
+      });
+      tempArray.push(temp);
     });
 
     const peopleDataArray = tempArray.map((personData, idx) => {
       let result = [];
+      console.log("personData", personData);
       personData.forEach((item, idx) => {
-        result.push(item.all_points[0], item.all_points[1], item.is_checked);
+        if (item.all_points) {
+          result.push(item.all_points[0], item.all_points[1], item.is_checked);
+        } else {
+          result.push(-1, -1, -1);
+        }
       });
       return {
         pose_keypoints_2d: result,
