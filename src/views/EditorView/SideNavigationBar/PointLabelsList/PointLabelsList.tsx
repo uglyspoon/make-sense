@@ -67,20 +67,29 @@ const PointLabelsList: React.FC<IProps> = ({
   };
 
   const updatePointLabel = (labelPointId: string, labelNameIndex: number) => {
+    let alreadyFlag: boolean = false;
     const newImageData = produce(imageData, draft => {
       draft.groupList[imageData.activeGroupIndex].labelPoints = labelPoints.map((currentLabel: LabelPoint) => {
         if (currentLabel.id === labelPointId) {
+          const alreadyHasIndex = draft.groupList[imageData.activeGroupIndex].labelPoints.some(
+            ele => ele.labelIndex === labelNameIndex
+          );
+          if (alreadyHasIndex) {
+            // console.log("labelNameIndex", labelNameIndex);
+            alert("已经标记过这个部位了");
+            alreadyFlag = true;
+            return currentLabel;
+          }
           return {
             ...currentLabel,
             labelIndex: labelNameIndex,
           };
-        } else {
-          return currentLabel;
         }
+        return currentLabel;
       });
     });
     updateImageDataById(imageData.id, newImageData);
-    updateActiveLabelNameIndex(labelNameIndex);
+    !alreadyFlag && updateActiveLabelNameIndex(labelNameIndex);
   };
 
   const onClickHandler = () => {

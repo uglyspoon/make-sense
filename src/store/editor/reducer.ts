@@ -1,6 +1,7 @@
 import { EditorActionTypes, EditorState, ImageData } from "./types";
 import { Action } from "../Actions";
 import produce from "immer";
+import { LabelType } from "../../data/enums/LabelType";
 const initialState: EditorState = {
   activeImageIndex: 0,
   projectName: "my_project",
@@ -60,8 +61,8 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.UPDATE_GROUP_LIST:
         draft.imagesData[activeImageIndex].groupList.push({
-          activeLabelNameIndex: null,
-          activeLabelType: null,
+          activeLabelNameIndex: 0,
+          activeLabelType: LabelType.POINT,
           activeLabelId: null,
           highlightedLabelId: null,
           firstLabelCreatedFlag: false,

@@ -19,7 +19,7 @@ export class Settings {
   public static readonly SECONDARY_COLOR: string = "#009efd";
 
   public static readonly DARK_THEME_FIRST_COLOR: string = "#171717";
-  public static readonly DARK_THEME_SECOND_COLOR: string = "#282828";
+  public static readonly DARK_THEME_SECOND_COLOR: string = "#C9FF2F";
   public static readonly DARK_THEME_THIRD_COLOR: string = "#4c4c4c";
   public static readonly DARK_THEME_FORTH_COLOR: string = "#252f35";
 

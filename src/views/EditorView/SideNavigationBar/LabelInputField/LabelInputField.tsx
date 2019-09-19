@@ -167,7 +167,9 @@ class LabelInputField extends React.Component<IProps, IState> {
                 </div>
               )}
             </div>
+            <span className="describeText">被遮挡</span>
             <input type="checkbox" onClick={() => onCheck(id)} checked={checked} onChange={() => {}} />
+
             <div className="ContentWrapper">
               <ImageButton
                 externalClassName={"trash"}

@@ -1,4 +1,4 @@
-@import '../../../../settings/Settings';
+@import "../../../../settings/Settings";
 
 .LabelInputField {
   background-color: transparent;
@@ -46,6 +46,11 @@
         align-items: center;
         align-content: center;
       }
+      > .describeText {
+        white-space: nowrap;
+        font-size: 12px;
+        color: #ddd;
+      }
 
       .DropdownLabel {
         position: relative;
@@ -77,7 +82,7 @@
           width: 100%;
           position: absolute;
           bottom: 0;
-          height: 1px;    // <- adjust
+          height: 1px; // <- adjust
           left: 0;
           z-index: 100;
           display: block;

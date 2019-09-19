@@ -18,7 +18,7 @@ export interface VGGRegion {
   // region_attributes: { [key: string]: string };
   label: string;
   is_checked: string;
-  all_points: string[] | string;
+  all_points: string[] | string | number[];
   type: string;
 }
 
@@ -26,8 +26,8 @@ export type VGGRegionsData = { [key: string]: VGGRegion };
 
 export type VGGFileData = {
   size: number;
-  filename: string;
-  key_points: VGGRegionsData[];
+  image_name: string;
+  people: any;
 };
 
 export type VGGObject = { [key: string]: VGGFileData };

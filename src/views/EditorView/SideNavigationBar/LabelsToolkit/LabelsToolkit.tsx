@@ -52,10 +52,8 @@ class LabelsToolkit extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
-    this.tabs =
-      props.projectType === ProjectType.IMAGE_RECOGNITION
-        ? [LabelType.NAME]
-        : [LabelType.RECTANGLE, LabelType.POINT, LabelType.POLYGON];
+    this.tabs = props.projectType === ProjectType.IMAGE_RECOGNITION ? [LabelType.NAME] : [LabelType.POINT];
+    // : [LabelType.RECTANGLE, LabelType.POINT, LabelType.POLYGON];
 
     const activeTab: LabelType = props.activeLabelType ? props.activeLabelType : this.tabs[0];
 
@@ -175,7 +173,10 @@ class LabelsToolkit extends React.Component<IProps, IState> {
         <div className="LabelsToolkitWrapper" key={`LabelsToolkitWrapper_` + idx}>
           <p
             className={idx === activeGroupIndex ? "active" : ""}
-            onClick={() => this.props.updateActiveGroupIndex(idx)}
+            onClick={() => {
+              this.props.updateActiveGroupIndex(idx);
+              this.headerClickHandler(this.state.activeLabelType);
+            }}
           >
             {`person-` + idx}
           </p>

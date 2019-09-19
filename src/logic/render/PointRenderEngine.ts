@@ -10,6 +10,7 @@ import {
   updateFirstLabelCreatedFlag,
   updateHighlightedLabelId,
   updateImageDataById,
+  updateActiveLabelNameIndex,
 } from "../../store/editor/actionCreators";
 import { RectUtil } from "../../utils/RectUtil";
 import { DrawUtil } from "../../utils/DrawUtil";
@@ -198,6 +199,23 @@ export class PointRenderEngine extends BaseRenderEngine {
 
   private addPointLabel = (point: IPoint) => {
     const activeLabelIndex = EditorSelector.getActiveLabelNameIndex();
+    const labelsLength = EditorSelector.getLabelNameLength();
+    const existedLabelIndexs = EditorSelector.getAllPointLabelIndex();
+    existedLabelIndexs.push(activeLabelIndex);
+    const allIndex = [...Array(labelsLength)].map((v, k) => k);
+
+    const difference = existedLabelIndexs
+      .concat(allIndex)
+      .filter(v => !existedLabelIndexs.includes(v) || !allIndex.includes(v));
+
+    console.log("difference", difference);
+    if (difference.indexOf(null) !== -1) {
+      difference.splice(difference.indexOf(null), 1);
+    }
+    if (existedLabelIndexs.length - 1 === labelsLength) {
+      alert("已经添加全部的关节");
+      return;
+    }
     const imageData: ImageData = EditorSelector.getActiveImageData();
     const labelPoint: LabelPoint = {
       id: uuidv1(),
@@ -211,5 +229,6 @@ export class PointRenderEngine extends BaseRenderEngine {
     store.dispatch(updateImageDataById(imageData.id, imageData));
     store.dispatch(updateFirstLabelCreatedFlag(true));
     store.dispatch(updateActiveLabelId(labelPoint.id));
+    store.dispatch(updateActiveLabelNameIndex(difference.length ? difference[0] : null));
   };
 }

@@ -24,6 +24,9 @@ export class EditorSelector {
     return store.getState().editor.imagesData[this.getActiveImageIndex()].groupList[this.getActiveGroupIndex()]
       .activeLabelNameIndex;
   }
+  public static getLabelNameLength(): number {
+    return store.getState().editor.labelNames.length;
+  }
 
   public static getImagesData(): ImageData[] {
     return store.getState().editor.imagesData;
@@ -54,7 +57,9 @@ export class EditorSelector {
 
     if (activeLabelId === null) return null;
 
-    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelRects, { id: activeLabelId });
+    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelRects, {
+      id: activeLabelId,
+    });
   }
 
   public static getActivePointLabel(): LabelPoint | null {
@@ -63,7 +68,19 @@ export class EditorSelector {
 
     if (activeLabelId === null) return null;
 
-    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPoints, { id: activeLabelId });
+    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPoints, {
+      id: activeLabelId,
+    });
+  }
+
+  public static getAllPointLabelIndex(): number[] {
+    //  let activeLabelId: string | null = EditorSelector.getActiveLabelId();
+    let activeGroupIndex: number | null = EditorSelector.getActiveGroupIndex();
+
+    const indexs = EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPoints.map(
+      ele => ele.labelIndex
+    );
+    return indexs;
   }
 
   public static getActivePolygonLabel(): LabelPolygon | null {
@@ -72,7 +89,9 @@ export class EditorSelector {
 
     if (activeLabelId === null) return null;
 
-    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPolygons, { id: activeLabelId });
+    return _.find(EditorSelector.getActiveImageData().groupList[activeGroupIndex].labelPolygons, {
+      id: activeLabelId,
+    });
   }
 
   public static getActiveLabelType(): LabelType {

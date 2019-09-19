@@ -31,9 +31,7 @@ export class AllLabelsExporter {
   }
 
   private static mapImagesDataToVGGObject(imagesData: ImageData[], labelNames: string[]): VGGObject {
-    console.log("imagesData", imagesData);
     return imagesData.reduce((data: VGGObject, image: ImageData) => {
-      console.log("data", data, image, imagesData);
       const fileData: VGGFileData = AllLabelsExporter.mapImageDataToVGGFileData(image, labelNames);
       if (!!fileData) {
         data[image.fileData.name] = fileData;
@@ -43,41 +41,62 @@ export class AllLabelsExporter {
   }
 
   private static mapImageDataToVGGFileData(imageData: ImageData, labelNames: string[]): VGGFileData {
-    const regionsDataArray: VGGRegionsData[] = AllLabelsExporter.mapImageDataToVGG(imageData, labelNames);
+    let regionsDataArray: VGGRegionsData[][] = AllLabelsExporter.mapImageDataToVGG(imageData, labelNames);
     if (!regionsDataArray) return null;
+
+    const orderArray = ["头顶", "左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"];
+    const tempArray = [];
+    regionsDataArray.forEach(item => {
+      tempArray.push(
+        Object.values(item).sort((a, b) => {
+          return orderArray.indexOf(a.label as any) - orderArray.indexOf(b.label as any);
+        })
+      );
+    });
+
+    const peopleDataArray = tempArray.map((personData, idx) => {
+      let result = [];
+      personData.forEach((item, idx) => {
+        result.push(item.all_points[0], item.all_points[1], item.is_checked);
+      });
+      return {
+        pose_keypoints_2d: result,
+      };
+    });
+
     return {
       size: imageData.fileData.size,
-      filename: imageData.fileData.name,
-      key_points: regionsDataArray,
+      image_name: imageData.fileData.name,
+      people: peopleDataArray,
     };
   }
 
-  public static mapImageDataToVGG(imageData: ImageData, labelNames: string[]): VGGRegionsData[] {
+  public static mapImageDataToVGG(imageData: ImageData, labelNames: string[]): VGGRegionsData[][] {
     if (
       !imageData.loadStatus ||
-      !imageData.groupList[imageData.activeGroupIndex].labelPolygons ||
-      !imageData.groupList[imageData.activeGroupIndex].labelPolygons.length ||
+      !imageData.groupList[imageData.activeGroupIndex].labelPoints ||
+      !imageData.groupList[imageData.activeGroupIndex].labelPoints.length ||
       !labelNames ||
       !labelNames.length
     )
       return null;
 
-    const validPolygonLabelsArray: Array<LabelPolygon[]> = AllLabelsExporter.getValidPolygonLabelsArray(imageData);
+    // const validPolygonLabelsArray: Array<LabelPolygon[]> = AllLabelsExporter.getValidPolygonLabelsArray(imageData);
 
-    let polygonsData = [];
-    if (validPolygonLabelsArray.length) {
-      polygonsData = validPolygonLabelsArray.map((validLabels: LabelPolygon[]) => {
-        return validLabels.reduce((data: VGGRegionsData, label: LabelPolygon, index: number) => {
-          data[`${index}`] = {
-            all_points: AllLabelsExporter.mapPolygonToVGG(label.vertices),
-            label: labelNames[label.labelIndex],
-            is_checked: label.checked ? "1" : "0",
-            type: "polygon",
-          };
-          return data;
-        }, {});
-      });
-    }
+    // let polygonsData = [];
+    // if (validPolygonLabelsArray.length) {
+    //   polygonsData = validPolygonLabelsArray.map((validLabels: LabelPolygon[]) => {
+    //     return validLabels.reduce((data: VGGRegionsData, label: LabelPolygon, index: number) => {
+    //       data[`${index}`] = {
+    //         all_points: AllLabelsExporter.mapPolygonToVGG(label.vertices),
+    //         label: labelNames[label.labelIndex],
+    //         is_checked: label.checked ? "1" : "0",
+    //         type: "polygon",
+    //       };
+    //       return data;
+    //     }, {});
+    //   });
+    // }
 
     const validPointLabelsArray: Array<LabelPoint[]> = AllLabelsExporter.getValidPointLabelsArray(imageData);
     let pointsData = [];
@@ -85,7 +104,7 @@ export class AllLabelsExporter {
       pointsData = validPointLabelsArray.map((validLabels: LabelPoint[]) => {
         return validLabels.reduce((data: VGGRegionsData, label: LabelPoint, index: number) => {
           data[`${index}`] = {
-            all_points: `(${label.point.x}, ${label.point.y})`,
+            all_points: [label.point.x, label.point.y],
             label: labelNames[label.labelIndex],
             is_checked: label.checked ? "1" : "0",
             type: "point",
@@ -94,8 +113,8 @@ export class AllLabelsExporter {
         }, {});
       });
     }
-
-    return polygonsData.concat(pointsData);
+    console.log("pointsData", pointsData);
+    return pointsData;
   }
 
   public static getValidPolygonLabelsArray(imageData: ImageData): LabelPolygon[][] {
