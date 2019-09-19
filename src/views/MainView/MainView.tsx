@@ -12,11 +12,14 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import ImagesDropZone from "./ImagesDropZone/ImagesDropZone";
 
 const MainView: React.FC = () => {
-  const [projectInProgress, setProjectInProgress] = useState(true);
+  const [projectInProgress, setProjectInProgress] = useState(false);
   const [projectCanceled, setProjectCanceled] = useState(false);
 
   const startProject = () => {
     setProjectInProgress(true);
+  };
+  const jumpToRegular = () => {
+    window.location.href = "https://uglyspoon.github.io/regular/";
   };
 
   const endProject = () => {
@@ -102,7 +105,8 @@ const MainView: React.FC = () => {
         <ImagesDropZone />
         {/* <div className="SocialMediaWrapper">{getSocialMediaButtons({ width: 30, height: 30 })}</div> */}
         <div className="SocialMediaWrapper"></div>
-        {!projectInProgress && <TextButton label={"开始"} onClick={startProject} />}
+        <TextButton label={"常规标记"} onClick={jumpToRegular} />
+        {!projectInProgress && <TextButton label={"关节标记"} onClick={startProject} />}
       </div>
     </div>
   );

@@ -72,7 +72,7 @@ const ImagesDropZone: React.FC<IProps> = ({
     <div className="ImagesDropZone">
       <div {...getRootProps({ className: "DropZone" })}>{getDropZoneContent()}</div>
       <div className="DropZoneButtons">
-        {/* <TextButton label={"Image recognition"} isDisabled={true} onClick={() => {}} /> */}
+        {/* <TextButton label={""} isDisabled={true} onClick={() => {}} /> */}
         <TextButton
           label={"开始标记"}
           isDisabled={!acceptedFiles.length}
