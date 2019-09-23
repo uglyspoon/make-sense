@@ -7,6 +7,7 @@ import {
   updateImageDataById,
   updateGroupList,
   updateActiveGroupIndex,
+  deleteGroupList,
 } from "../../../../store/editor/actionCreators";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
@@ -25,6 +26,7 @@ import { ContextType } from "../../../../data/enums/ContextType";
 import Scrollbars from "react-custom-scrollbars";
 import { GroupType } from "../../../../store/editor/types";
 import { EditorSelector } from "../../../../store/selectors/EditorSelector";
+import { TextButton } from "../../../Common/TextButton/TextButton";
 
 interface IProps {
   activeImageIndex: number;
@@ -38,6 +40,7 @@ interface IProps {
   updateActiveLabelId: (highlightedLabelId: string) => any;
   updateGroupList: (groupName: string) => any;
   updateActiveGroupIndex: (groupIndex: number) => any;
+  deleteGroupList: (groupIndex: number) => any;
 }
 
 interface IState {
@@ -171,15 +174,22 @@ class LabelsToolkit extends React.Component<IProps, IState> {
     return groupList
       .map((groupName, idx) => (
         <div className="LabelsToolkitWrapper" key={`LabelsToolkitWrapper_` + idx}>
-          <p
-            className={idx === activeGroupIndex ? "active" : ""}
+          <div
+            className={idx === activeGroupIndex ? "active pDiv" : "pDiv"}
             onClick={() => {
               this.props.updateActiveGroupIndex(idx);
               this.headerClickHandler(this.state.activeLabelType);
             }}
           >
             {`person-` + idx}
-          </p>
+            {idx !== activeGroupIndex ? (
+              <TextButton
+                label="删除"
+                externalClassName="buttonClass"
+                onClick={() => this.props.deleteGroupList(idx)}
+              ></TextButton>
+            ) : null}
+          </div>
           {idx === activeGroupIndex && this.renderChildren(idx)}
         </div>
       ))
@@ -210,6 +220,7 @@ const mapDispatchToProps = {
   updateActiveLabelId,
   updateGroupList,
   updateActiveGroupIndex,
+  deleteGroupList,
 };
 
 const mapStateToProps = (state: AppState) => ({

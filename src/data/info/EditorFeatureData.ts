@@ -6,11 +6,6 @@ export interface IEditorFeature {
 
 export const EditorFeatureData: IEditorFeature[] = [
   {
-    displayText: "开源并且在GPLv3协议许可下免费使用",
-    imageSrc: "img/open-source.png",
-    imageAlt: "open-source",
-  },
-  {
     displayText: "不需要额外安装，仅仅打开浏览器就可以开始工作",
     imageSrc: "img/online.png",
     imageAlt: "online",

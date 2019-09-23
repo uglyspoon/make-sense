@@ -26,7 +26,7 @@ export type VGGRegionsData = { [key: string]: any };
 
 export type VGGFileData = {
   // size: number;
-  image_name: string;
+  label_name: string[];
   people: any;
   width: number;
   height: number;

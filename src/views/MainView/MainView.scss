@@ -126,7 +126,11 @@
     flex-direction: column;
     justify-content: space-between;
 
-    > img {
+    // > img {
+    //   width: 220px;
+    //   user-select: none;
+    // }
+    > div {
       width: 220px;
       user-select: none;
     }

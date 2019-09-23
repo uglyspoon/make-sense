@@ -44,7 +44,7 @@ export class AllLabelsExporter {
     let regionsDataArray: VGGRegionsData[][] = AllLabelsExporter.mapImageDataToVGG(imageData, labelNames);
     if (!regionsDataArray) return null;
 
-    const orderArray = ["头顶", "左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"];
+    const orderArray: string[] = labelNames;
     const tempArray = [];
     regionsDataArray.forEach(item => {
       item = Object.values(item);
@@ -79,9 +79,10 @@ export class AllLabelsExporter {
     });
     return {
       // size: imageData.fileData.size,
+      label_name: labelNames,
       width: (imageData.fileData as any).width,
       height: (imageData.fileData as any).height,
-      image_name: imageData.fileData.name,
+      // image_name: imageData.fileData.name,
       people: peopleDataArray,
     };
   }

@@ -169,6 +169,13 @@ interface findNextAvailableLabelIndex {
   type: typeof Action.FIND_NEXT_AVAILABLE_LABEL_INDEX;
 }
 
+interface deleteGroupList {
+  type: typeof Action.DELETE_GROUP_LIST;
+  payload: {
+    groupIndex: number;
+  };
+}
+
 export type EditorActionTypes =
   | UpdateProjectType
   | UpdateProjectName
@@ -185,4 +192,5 @@ export type EditorActionTypes =
   | UpdateGroupList
   | UpdateActiveGroupIndex
   | UpdateGroupDataByIndex
-  | findNextAvailableLabelIndex;
+  | findNextAvailableLabelIndex
+  | deleteGroupList;

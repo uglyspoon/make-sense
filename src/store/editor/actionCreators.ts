@@ -133,3 +133,12 @@ export function findNextAvailableLabelIndex() {
     type: Action.FIND_NEXT_AVAILABLE_LABEL_INDEX,
   };
 }
+
+export function deleteGroupList(groupIndex: number) {
+  return {
+    type: Action.DELETE_GROUP_LIST,
+    payload: {
+      groupIndex,
+    },
+  };
+}

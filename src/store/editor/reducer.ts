@@ -7,7 +7,7 @@ const initialState: EditorState = {
   projectName: "my_project",
   imagesData: [],
   projectType: null,
-  labelNames: ["头顶", "左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"],
+  labelNames: ["左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"],
 };
 
 export function editorReducer(state = initialState, action: EditorActionTypes): EditorState {
@@ -70,6 +70,16 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
           labelPoints: [],
           labelPolygons: [],
         });
+        break;
+      case Action.DELETE_GROUP_LIST:
+        const newGroupList = draft.imagesData[activeImageIndex].groupList.filter(
+          (_, idx) => idx !== action.payload.groupIndex
+        );
+        const activeGroup = draft.imagesData[activeImageIndex].groupList[activeGroupIndex];
+
+        const newActiveGroupIndex = newGroupList.findIndex(item => item === activeGroup);
+        draft.imagesData[activeImageIndex].activeGroupIndex = newActiveGroupIndex;
+        draft.imagesData[activeImageIndex].groupList = newGroupList;
         break;
       case Action.UPDATE_ACTIVE_GROUP_INDEX:
         draft.imagesData[activeImageIndex].activeGroupIndex = action.payload.groupIndex;

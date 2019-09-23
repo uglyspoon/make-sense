@@ -92,7 +92,8 @@ const MainView: React.FC = () => {
 
       <div className="LeftColumn">
         <div className={"LogoWrapper"}>
-          <img draggable={false} alt={"main-logo"} src={"img/main-image-color.png"} />
+          {/* <img draggable={false} alt={"main-logo"} src={"img/main-image-color.png"} /> */}
+          {/* <div /> */}
         </div>
         <div className="EditorFeaturesWrapper">{getEditorFeatureTiles()}</div>
         <div className="TriangleVertical">
