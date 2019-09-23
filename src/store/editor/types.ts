@@ -165,6 +165,10 @@ interface UpdateActiveGroupIndex {
   };
 }
 
+interface findNextAvailableLabelIndex {
+  type: typeof Action.FIND_NEXT_AVAILABLE_LABEL_INDEX;
+}
+
 export type EditorActionTypes =
   | UpdateProjectType
   | UpdateProjectName
@@ -180,4 +184,5 @@ export type EditorActionTypes =
   | UpdateFirstLabelCreatedFlag
   | UpdateGroupList
   | UpdateActiveGroupIndex
-  | UpdateGroupDataByIndex;
+  | UpdateGroupDataByIndex
+  | findNextAvailableLabelIndex;

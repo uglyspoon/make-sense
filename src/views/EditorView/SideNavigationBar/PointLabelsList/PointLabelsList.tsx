@@ -7,6 +7,7 @@ import {
   updateActiveLabelId,
   updateActiveLabelNameIndex,
   updateImageDataById,
+  findNextAvailableLabelIndex,
 } from "../../../../store/editor/actionCreators";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
@@ -25,6 +26,7 @@ interface IProps {
   updateActiveLabelNameIndex: (activeLabelIndex: number) => any;
   labelNames: string[];
   updateActiveLabelId: (activeLabelId: string) => any;
+  findNextAvailableLabelIndex: () => any;
 }
 
 const PointLabelsList: React.FC<IProps> = ({
@@ -36,6 +38,7 @@ const PointLabelsList: React.FC<IProps> = ({
   activeLabelId,
   highlightedLabelId,
   updateActiveLabelId,
+  findNextAvailableLabelIndex,
 }) => {
   const labelPoints = EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].labelPoints;
   const labelInputFieldHeight = 40;
@@ -55,6 +58,7 @@ const PointLabelsList: React.FC<IProps> = ({
       });
     });
     updateImageDataById(imageData.id, newImageData);
+    findNextAvailableLabelIndex();
   };
 
   const checkPointLabelById = (labelPointId: string) => {
@@ -97,7 +101,7 @@ const PointLabelsList: React.FC<IProps> = ({
   };
 
   const getChildren = () => {
-    return labelPoints.map((labelPoint: LabelPoint) => {
+    return labelPoints.map((labelPoint: LabelPoint, labelIndex: number) => {
       return (
         <LabelInputField
           size={{
@@ -114,6 +118,7 @@ const PointLabelsList: React.FC<IProps> = ({
           onSelectLabel={updatePointLabel}
           onCheck={checkPointLabelById}
           checked={labelPoint.checked}
+          index={labelIndex}
         />
       );
     });
@@ -138,6 +143,7 @@ const mapDispatchToProps = {
   updateImageDataById,
   updateActiveLabelNameIndex,
   updateActiveLabelId,
+  findNextAvailableLabelIndex,
 };
 
 const mapStateToProps = (state: AppState) => {

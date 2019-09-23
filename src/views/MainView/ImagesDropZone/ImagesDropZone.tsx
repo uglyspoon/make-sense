@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import "./ImagesDropZone.scss";
 import { useDropzone } from "react-dropzone";
 import { TextButton } from "../../Common/TextButton/TextButton";
@@ -25,8 +25,26 @@ const ImagesDropZone: React.FC<IProps> = ({
   updateProjectType,
   updateActivePopupType,
 }) => {
+  const onDrop = useCallback(acceptedFiles => {
+    acceptedFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        var image = new Image();
+        image.src = reader.result as any;
+        image.onload = function(img) {
+          file.width = (this as any).width;
+          file.height = (this as any).height;
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: AcceptedFileType.IMAGE,
+    onDrop,
   });
 
   const startEditor = (projectType: ProjectType) => {

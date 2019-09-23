@@ -11,6 +11,7 @@ import {
   updateHighlightedLabelId,
   updateImageDataById,
   updateActiveLabelNameIndex,
+  findNextAvailableLabelIndex,
 } from "../../store/editor/actionCreators";
 import { RectUtil } from "../../utils/RectUtil";
 import { DrawUtil } from "../../utils/DrawUtil";
@@ -199,35 +200,26 @@ export class PointRenderEngine extends BaseRenderEngine {
 
   private addPointLabel = (point: IPoint) => {
     const activeLabelIndex = EditorSelector.getActiveLabelNameIndex();
-    const labelsLength = EditorSelector.getLabelNameLength();
-    const existedLabelIndexs = EditorSelector.getAllPointLabelIndex();
-    existedLabelIndexs.push(activeLabelIndex);
-    const allIndex = [...Array(labelsLength)].map((v, k) => k);
-
-    const difference = existedLabelIndexs
-      .concat(allIndex)
-      .filter(v => !existedLabelIndexs.includes(v) || !allIndex.includes(v));
-
-    if (difference.indexOf(null) !== -1) {
-      difference.splice(difference.indexOf(null), 1);
-    }
-    if (existedLabelIndexs.length - 1 === labelsLength) {
-      alert("已经添加全部的关节");
-      return;
-    }
+    const activeGroupIndex = EditorSelector.getActiveGroupIndex();
     const imageData: ImageData = EditorSelector.getActiveImageData();
+    const existedLabelIndexs = EditorSelector.getAllPointLabelIndex();
+    const labelsLength = EditorSelector.getLabelNameLength();
+
     const labelPoint: LabelPoint = {
       id: uuidv1(),
       labelIndex: activeLabelIndex,
       checked: false,
       point,
     };
-    const activeGroupIndex = EditorSelector.getActiveGroupIndex();
 
+    if (existedLabelIndexs.length === labelsLength) {
+      alert("已经添加全部的关节");
+      return;
+    }
     imageData.groupList[activeGroupIndex].labelPoints.push(labelPoint);
     store.dispatch(updateImageDataById(imageData.id, imageData));
     store.dispatch(updateFirstLabelCreatedFlag(true));
     store.dispatch(updateActiveLabelId(labelPoint.id));
-    store.dispatch(updateActiveLabelNameIndex(difference.length ? difference[0] : null));
+    store.dispatch(findNextAvailableLabelIndex());
   };
 }

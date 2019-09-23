@@ -89,7 +89,7 @@ const PolygonLabelsList: React.FC<IProps> = ({
   };
 
   const getChildren = () => {
-    return labelPolygons.map((labelPolygon: LabelPolygon) => {
+    return labelPolygons.map((labelPolygon: LabelPolygon, labelIndex: number) => {
       return (
         <LabelInputField
           size={{
@@ -99,6 +99,7 @@ const PolygonLabelsList: React.FC<IProps> = ({
           isActive={labelPolygon.id === activeLabelId}
           isHighlighted={labelPolygon.id === highlightedLabelId}
           id={labelPolygon.id}
+          index={labelIndex}
           key={labelPolygon.id}
           onDelete={deletePolygonLabelById}
           value={labelPolygon.labelIndex !== null ? labelNames[labelPolygon.labelIndex] : null}

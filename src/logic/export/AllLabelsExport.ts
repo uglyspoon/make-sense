@@ -78,9 +78,11 @@ export class AllLabelsExporter {
         pose_keypoints_2d: result,
       };
     });
-
+    console.log("imageData", imageData);
     return {
-      size: imageData.fileData.size,
+      // size: imageData.fileData.size,
+      width: (imageData.fileData as any).width,
+      height: (imageData.fileData as any).height,
       image_name: imageData.fileData.name,
       people: peopleDataArray,
     };
@@ -121,7 +123,7 @@ export class AllLabelsExporter {
           data[`${index}`] = {
             all_points: [label.point.x, label.point.y],
             label: labelNames[label.labelIndex],
-            is_checked: label.checked ? "1" : "0",
+            is_checked: label.checked ? 1 : 0,
             type: "point",
           };
           return data;

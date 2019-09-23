@@ -8,7 +8,11 @@ import { IPoint } from "../../../../interfaces/IPoint";
 import { RectUtil } from "../../../../utils/RectUtil";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
-import { updateActiveLabelId, updateHighlightedLabelId } from "../../../../store/editor/actionCreators";
+import {
+  updateActiveLabelId,
+  updateHighlightedLabelId,
+  findNextAvailableLabelIndex,
+} from "../../../../store/editor/actionCreators";
 import Scrollbars from "react-custom-scrollbars";
 
 interface IProps {
@@ -16,6 +20,7 @@ interface IProps {
   isActive: boolean;
   isHighlighted: boolean;
   id: string;
+  index: number;
   value: string;
   checked: boolean;
   options: string[];
@@ -24,6 +29,7 @@ interface IProps {
   onSelectLabel: (labelRectId: string, labelNameIndex: number) => any;
   updateHighlightedLabelId: (highlightedLabelId: string) => any;
   updateActiveLabelId: (highlightedLabelId: string) => any;
+  findNextAvailableLabelIndex: () => any;
 }
 
 interface IState {
@@ -102,6 +108,7 @@ class LabelInputField extends React.Component<IProps, IState> {
       this.props.onSelectLabel(this.props.id, index);
       this.props.updateHighlightedLabelId(null);
       this.props.updateActiveLabelId(this.props.id);
+      this.props.findNextAvailableLabelIndex();
       event.stopPropagation();
     };
 
@@ -189,6 +196,7 @@ class LabelInputField extends React.Component<IProps, IState> {
 const mapDispatchToProps = {
   updateHighlightedLabelId,
   updateActiveLabelId,
+  findNextAvailableLabelIndex,
 };
 
 const mapStateToProps = (state: AppState) => ({});

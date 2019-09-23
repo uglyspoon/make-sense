@@ -89,7 +89,7 @@ const RectLabelsList: React.FC<IProps> = ({
   };
 
   const getChildren = () => {
-    return labelRects.map((labelRect: LabelRect) => {
+    return labelRects.map((labelRect: LabelRect, labelIndex: number) => {
       return (
         <LabelInputField
           size={{
@@ -97,6 +97,7 @@ const RectLabelsList: React.FC<IProps> = ({
             height: labelInputFieldHeight,
           }}
           isActive={labelRect.id === activeLabelId}
+          index={labelIndex}
           isHighlighted={labelRect.id === highlightedLabelId}
           id={labelRect.id}
           key={labelRect.id}

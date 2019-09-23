@@ -25,9 +25,11 @@ export interface VGGRegion {
 export type VGGRegionsData = { [key: string]: any };
 
 export type VGGFileData = {
-  size: number;
+  // size: number;
   image_name: string;
   people: any;
+  width: number;
+  height: number;
 };
 
 export type VGGObject = { [key: string]: VGGFileData };

@@ -128,3 +128,8 @@ export function updateActiveGroupIndex(groupIndex: number) {
     },
   };
 }
+export function findNextAvailableLabelIndex() {
+  return {
+    type: Action.FIND_NEXT_AVAILABLE_LABEL_INDEX,
+  };
+}

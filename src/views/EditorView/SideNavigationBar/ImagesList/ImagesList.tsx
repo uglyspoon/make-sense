@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import { LabelType } from "../../../../data/enums/LabelType";
 import { ISize } from "../../../../interfaces/ISize";
 import { AppState } from "../../../../store";
-import { updateActiveImageIndex, updateActiveLabelId } from "../../../../store/editor/actionCreators";
+import {
+  updateActiveImageIndex,
+  updateActiveLabelId,
+  updateActiveLabelType,
+} from "../../../../store/editor/actionCreators";
 import { ImageData } from "../../../../store/editor/types";
 import { VirtualList } from "../../../Common/VirtualList/VirtualList";
 import ImagePreview from "../ImagePreview/ImagePreview";
@@ -17,6 +21,7 @@ interface IProps {
   imagesData: ImageData[];
   updateActiveImageIndex: (activeImageIndex: number) => any;
   updateActiveLabelId: (activeLabelId: string) => any;
+  updateActiveLabelType: (activeLabelType: LabelType) => any;
   activeLabelType: LabelType;
 }
 
@@ -57,7 +62,9 @@ class ImagesList extends React.Component<IProps, IState> {
   };
 
   private onClickHandler = (index: number) => {
+    // console.log(this.props.activeLabelType);
     this.props.updateActiveImageIndex(index);
+    this.props.updateActiveLabelType(this.props.activeLabelType);
     this.props.updateActiveLabelId(null);
   };
 
@@ -110,6 +117,7 @@ class ImagesList extends React.Component<IProps, IState> {
 const mapDispatchToProps = {
   updateActiveImageIndex,
   updateActiveLabelId,
+  updateActiveLabelType,
 };
 
 const mapStateToProps = (state: AppState) => ({
