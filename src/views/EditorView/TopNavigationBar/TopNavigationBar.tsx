@@ -17,11 +17,7 @@ interface IProps {
   projectName: string;
 }
 
-const TopNavigationBar: React.FC<IProps> = ({
-  updateActivePopupType,
-  updateProjectName,
-  projectName,
-}) => {
+const TopNavigationBar: React.FC<IProps> = ({ updateActivePopupType, updateProjectName, projectName }) => {
   const onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     event.target.setSelectionRange(0, event.target.value.length);
   };
@@ -40,19 +36,13 @@ const TopNavigationBar: React.FC<IProps> = ({
             className="Header"
             // onClick={() => updateActivePopupType(PopupWindowType.EXIT_PROJECT)}
           >
-            <img draggable={false} alt={"make-sense"} src={"/make-sense-ico-transparent.png"} />
-            Make Sense
+            {/* <img draggable={false} alt={"make-sense"} src={"/make-sense-ico-transparent.png"} />
+            Make Sense */}
           </div>
         </div>
         <div className="NavigationBarGroupWrapper">
           <div className="ProjectName">项目名称:</div>
-          <TextInput
-            key={"ProjectName"}
-            isPassword={false}
-            value={projectName}
-            onChange={onChange}
-            onFocus={onFocus}
-          />
+          <TextInput key={"ProjectName"} isPassword={false} value={projectName} onChange={onChange} onFocus={onFocus} />
         </div>
         <div className="NavigationBarGroupWrapper">
           <UnderlineTextButton
