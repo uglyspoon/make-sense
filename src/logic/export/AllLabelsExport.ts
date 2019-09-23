@@ -66,7 +66,6 @@ export class AllLabelsExporter {
 
     const peopleDataArray = tempArray.map((personData, idx) => {
       let result = [];
-      console.log("personData", personData);
       personData.forEach((item, idx) => {
         if (item.all_points) {
           result.push(item.all_points[0], item.all_points[1], item.is_checked);
@@ -78,7 +77,6 @@ export class AllLabelsExporter {
         pose_keypoints_2d: result,
       };
     });
-    console.log("imageData", imageData);
     return {
       // size: imageData.fileData.size,
       width: (imageData.fileData as any).width,
@@ -130,7 +128,6 @@ export class AllLabelsExporter {
         }, {});
       });
     }
-    console.log("pointsData", pointsData);
     return pointsData;
   }
 

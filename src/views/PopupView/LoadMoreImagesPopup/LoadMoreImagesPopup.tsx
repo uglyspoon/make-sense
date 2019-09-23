@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import "./LoadMoreImagesPopup.scss";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -15,15 +15,31 @@ interface IProps {
 }
 
 const LoadMoreImagesPopup: React.FC<IProps> = ({ addImageData }) => {
+  const onDrop = useCallback(acceptedFiles => {
+    acceptedFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        var image = new Image();
+        image.src = reader.result as any;
+        image.onload = function(img) {
+          file.width = (this as any).width;
+          file.height = (this as any).height;
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: AcceptedFileType.IMAGE,
+    onDrop,
   });
 
   const onAccept = () => {
     if (acceptedFiles.length > 0) {
-      addImageData(
-        acceptedFiles.map((fileData: File) => FileUtil.mapFileDataToImageData(fileData))
-      );
+      addImageData(acceptedFiles.map((fileData: File) => FileUtil.mapFileDataToImageData(fileData)));
       PopupActions.close();
     }
   };
