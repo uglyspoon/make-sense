@@ -1,8 +1,8 @@
-import { IRect } from "../../interfaces/IRect";
-import { ProjectType } from "../../data/enums/ProjectType";
-import { Action } from "../Actions";
-import { LabelType } from "../../data/enums/LabelType";
-import { IPoint } from "../../interfaces/IPoint";
+import { IRect } from '../../interfaces/IRect';
+import { ProjectType } from '../../data/enums/ProjectType';
+import { Action } from '../Actions';
+import { LabelType } from '../../data/enums/LabelType';
+import { IPoint } from '../../interfaces/IPoint';
 
 export type LabelRect = {
   id: string;
@@ -169,10 +169,24 @@ interface findNextAvailableLabelIndex {
   type: typeof Action.FIND_NEXT_AVAILABLE_LABEL_INDEX;
 }
 
+interface loadDataFromLocalStorge {
+  type: typeof Action.LOAD_DATA_FROM_LOCALSTORGE;
+}
+
 interface deleteGroupList {
   type: typeof Action.DELETE_GROUP_LIST;
   payload: {
     groupIndex: number;
+  };
+}
+interface updateLabelIndexByInfo {
+  type: typeof Action.UPDATE_LABEL_INDEX_BY_INFO;
+  payload: {
+    imageIndex: number;
+    groupIndex: number;
+    labelPointIndex: number;
+    labelIndex: number;
+    labelCheckd: boolean;
   };
 }
 
@@ -193,4 +207,6 @@ export type EditorActionTypes =
   | UpdateActiveGroupIndex
   | UpdateGroupDataByIndex
   | findNextAvailableLabelIndex
-  | deleteGroupList;
+  | deleteGroupList
+  | loadDataFromLocalStorge
+  | updateLabelIndexByInfo;

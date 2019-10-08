@@ -1,7 +1,7 @@
-import { store } from "../..";
-import { ImageData, LabelPoint, LabelPolygon, LabelRect } from "../editor/types";
-import _ from "lodash";
-import { LabelType } from "../../data/enums/LabelType";
+import { ImageData, LabelPoint, LabelPolygon, LabelRect } from '../editor/types';
+import _ from 'lodash';
+import { LabelType } from '../../data/enums/LabelType';
+import { store } from '../../index';
 
 export class EditorSelector {
   public static getProjectName(): string {
@@ -42,8 +42,12 @@ export class EditorSelector {
   }
 
   public static getActiveLabelId(): string | null {
-    return store.getState().editor.imagesData[this.getActiveImageIndex()].groupList[this.getActiveGroupIndex()]
+    const result = store.getState().editor.imagesData[this.getActiveImageIndex()].groupList[this.getActiveGroupIndex()]
       .activeLabelId;
+    if (!result) {
+      // console.log(result);
+    }
+    return result;
   }
 
   public static getHighlightedLabelId(): string | null {

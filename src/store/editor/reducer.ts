@@ -1,13 +1,16 @@
-import { EditorActionTypes, EditorState, ImageData } from "./types";
-import { Action } from "../Actions";
-import produce from "immer";
-import { LabelType } from "../../data/enums/LabelType";
+import { EditorActionTypes, EditorState, ImageData } from './types';
+import { Action } from '../Actions';
+import produce from 'immer';
+import { LabelType } from '../../data/enums/LabelType';
+import { EditorActions } from '../../logic/actions/EditorActions';
+import { EditorModel } from '../../staticModels/EditorModel';
+
 const initialState: EditorState = {
   activeImageIndex: 0,
-  projectName: "my_project",
+  projectName: 'my_project',
   imagesData: [],
   projectType: null,
-  labelNames: ["左手心", "右手心", "左脚跟", "左脚尖", "右脚跟", "右脚尖"],
+  labelNames: ['左手心', '右手心', '左脚跟', '左脚尖', '右脚跟', '右脚尖'],
 };
 
 export function editorReducer(state = initialState, action: EditorActionTypes): EditorState {
@@ -25,10 +28,19 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.UPDATE_ACTIVE_IMAGE_INDEX:
         draft.activeImageIndex = action.payload.activeImageIndex;
+        console.log(draft.activeImageIndex, 'draft.activeImageIndex');
         break;
       case Action.UPDATE_ACTIVE_LABEL_NAME_INDEX:
         draft.imagesData[activeImageIndex].groupList[activeGroupIndex].activeLabelNameIndex =
           action.payload.activeLabelNameIndex;
+        break;
+      case Action.UPDATE_LABEL_INDEX_BY_INFO:
+        const { imageIndex, groupIndex, labelPointIndex, labelIndex, labelCheckd } = action.payload;
+        if (!draft.imagesData[imageIndex].groupList[groupIndex].labelPoints[labelPointIndex]) {
+          break;
+        }
+        draft.imagesData[imageIndex].groupList[groupIndex].labelPoints[labelPointIndex].labelIndex = labelIndex;
+        draft.imagesData[imageIndex].groupList[groupIndex].labelPoints[labelPointIndex].checked = labelCheckd;
         break;
       case Action.UPDATE_ACTIVE_LABEL_ID:
         draft.imagesData[activeImageIndex].groupList[activeGroupIndex].activeLabelId = action.payload.activeLabelId;
@@ -45,9 +57,27 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         draft.imagesData = state.imagesData.map((imageData: ImageData) =>
           imageData.id === action.payload.id ? action.payload.newImageData : imageData
         );
+        draft.imagesData.forEach((item, idx) => {
+          if (item.groupList.some(ele => !!ele.activeLabelId)) {
+            localStorage.setItem(item.fileData.name, JSON.stringify(item));
+          }
+        });
         break;
       case Action.ADD_IMAGES_DATA:
-        draft.imagesData = draft.imagesData.concat(action.payload.imageData);
+        const addImagesData = action.payload.imageData;
+        draft.imagesData = draft.imagesData.concat(addImagesData);
+        console.log('imagesData', action.payload.imageData);
+
+        break;
+      case Action.LOAD_DATA_FROM_LOCALSTORGE:
+        draft.imagesData.forEach((item, idx) => {
+          if (localStorage.getItem(item.fileData.name)) {
+            const newData = JSON.parse(localStorage.getItem(item.fileData.name));
+            newData.fileData = draft.imagesData[idx].fileData;
+            draft.imagesData[idx] = newData;
+            // console.log(JSON.parse(localStorage.getItem(item.fileData.name)));
+          }
+        });
         break;
       case Action.UPDATE_IMAGES_DATA:
         draft.imagesData = action.payload.imageData;

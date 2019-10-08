@@ -1,23 +1,24 @@
-import classNames from "classnames";
-import React from "react";
-import { connect } from "react-redux";
-import { ClipLoader } from "react-spinners";
-import { ImageLoadManager } from "../../../../logic/imageRepository/ImageLoadManager";
-import { IRect } from "../../../../interfaces/IRect";
-import { ISize } from "../../../../interfaces/ISize";
-import { ImageRepository } from "../../../../logic/imageRepository/ImageRepository";
-import { Settings } from "../../../../settings/Settings";
-import { AppState } from "../../../../store";
-import { updateImageDataById } from "../../../../store/editor/actionCreators";
-import { ImageData } from "../../../../store/editor/types";
-import { FileUtil } from "../../../../utils/FileUtil";
-import { RectUtil } from "../../../../utils/RectUtil";
-import "./ImagePreview.scss";
+import classNames from 'classnames';
+import React from 'react';
+import { connect } from 'react-redux';
+import { ClipLoader } from 'react-spinners';
+import { ImageLoadManager } from '../../../../logic/imageRepository/ImageLoadManager';
+import { IRect } from '../../../../interfaces/IRect';
+import { ISize } from '../../../../interfaces/ISize';
+import { ImageRepository } from '../../../../logic/imageRepository/ImageRepository';
+import { Settings } from '../../../../settings/Settings';
+import { AppState } from '../../../../store';
+import { updateImageDataById } from '../../../../store/editor/actionCreators';
+import { ImageData } from '../../../../store/editor/types';
+import { FileUtil } from '../../../../utils/FileUtil';
+import { RectUtil } from '../../../../utils/RectUtil';
+import './ImagePreview.scss';
 
 interface IProps {
   imageData: ImageData;
   style: React.CSSProperties;
   size: ISize;
+  index: number;
   isScrolling?: boolean;
   isChecked?: boolean;
   onClick?: () => any;
@@ -120,19 +121,18 @@ class ImagePreview extends React.Component<IProps, IState> {
   private handleLoadImageError = () => {};
 
   private getClassName = () => {
-    return classNames("ImagePreview", {
+    return classNames('ImagePreview', {
       selected: this.props.isSelected,
     });
   };
 
   public render() {
-    const { isChecked, style, onClick } = this.props;
-
+    const { isChecked, style, onClick, index } = this.props;
     return (
-      <div className={this.getClassName()} style={style} onClick={onClick ? onClick : undefined}>
+      <div className={this.getClassName()} style={style} onClick={onClick ? onClick : undefined} data-index={index}>
         {!!this.state.image ? (
           [
-            <div className="Foreground" key={"Foreground"} style={this.getStyle()}>
+            <div className="Foreground" key={'Foreground'} style={this.getStyle()}>
               <img
                 className="Image"
                 draggable={false}
@@ -141,13 +141,13 @@ class ImagePreview extends React.Component<IProps, IState> {
                 style={{ ...this.getStyle(), left: 0, top: 0 }}
               />
               {isChecked && (
-                <img className="CheckBox" draggable={false} src={"ico/checkbox-checked-color.png"} alt={"checkbox"} />
+                <img className="CheckBox" draggable={false} src={'ico/checkbox-checked-color.png'} alt={'checkbox'} />
               )}
             </div>,
-            <div className="Background" key={"Background"} style={this.getStyle()} />,
+            <div className="Background" key={'Background'} style={this.getStyle()} />,
           ]
         ) : (
-          <ClipLoader sizeUnit={"px"} size={30} color={Settings.SECONDARY_COLOR} loading={true} />
+          <ClipLoader sizeUnit={'px'} size={30} color={Settings.SECONDARY_COLOR} loading={true} />
         )}
       </div>
     );

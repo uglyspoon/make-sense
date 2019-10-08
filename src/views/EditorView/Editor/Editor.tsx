@@ -1,26 +1,28 @@
-import React from "react";
-import "./Editor.scss";
-import { ISize } from "../../../interfaces/ISize";
-import { ImageData } from "../../../store/editor/types";
-import { FileUtil } from "../../../utils/FileUtil";
-import { AppState } from "../../../store";
-import { connect } from "react-redux";
-import { updateImageDataById } from "../../../store/editor/actionCreators";
-import { ImageRepository } from "../../../logic/imageRepository/ImageRepository";
-import { LabelType } from "../../../data/enums/LabelType";
-import { PopupWindowType } from "../../../data/enums/PopupWindowType";
-import { CanvasUtil } from "../../../utils/CanvasUtil";
-import { CustomCursorStyle } from "../../../data/enums/CustomCursorStyle";
-import { ImageLoadManager } from "../../../logic/imageRepository/ImageLoadManager";
-import { EventType } from "../../../data/enums/EventType";
-import { EditorData } from "../../../data/EditorData";
-import { EditorModel } from "../../../staticModels/EditorModel";
-import { EditorActions } from "../../../logic/actions/EditorActions";
-import { EditorUtil } from "../../../utils/EditorUtil";
-import { ContextManager } from "../../../logic/context/ContextManager";
-import { ContextType } from "../../../data/enums/ContextType";
+import React from 'react';
+import './Editor.scss';
+import { ISize } from '../../../interfaces/ISize';
+import { ImageData } from '../../../store/editor/types';
+import { FileUtil } from '../../../utils/FileUtil';
+import { AppState } from '../../../store';
+import { connect } from 'react-redux';
+import { updateImageDataById } from '../../../store/editor/actionCreators';
+import { ImageRepository } from '../../../logic/imageRepository/ImageRepository';
+import { LabelType } from '../../../data/enums/LabelType';
+import { PopupWindowType } from '../../../data/enums/PopupWindowType';
+import { CanvasUtil } from '../../../utils/CanvasUtil';
+import { CustomCursorStyle } from '../../../data/enums/CustomCursorStyle';
+import { ImageLoadManager } from '../../../logic/imageRepository/ImageLoadManager';
+import { EventType } from '../../../data/enums/EventType';
+import { EditorData } from '../../../data/EditorData';
+import { EditorModel } from '../../../staticModels/EditorModel';
+import { EditorActions } from '../../../logic/actions/EditorActions';
+import { EditorUtil } from '../../../utils/EditorUtil';
+import { ContextManager } from '../../../logic/context/ContextManager';
+import { ContextType } from '../../../data/enums/ContextType';
+import { loadDataFromLocalStorge } from '../../../store/editor/actionCreators';
 
-import { EditorSelector } from "../../../store/selectors/EditorSelector";
+import { EditorSelector } from '../../../store/selectors/EditorSelector';
+import produce from 'immer';
 
 interface IProps {
   size: ISize;
@@ -30,6 +32,7 @@ interface IProps {
   activePopupType: PopupWindowType;
   activeLabelId: string;
   customCursorStyle: CustomCursorStyle;
+  loadDataFromLocalStorge: () => any;
 }
 
 class Editor extends React.Component<IProps, {}> {
@@ -41,7 +44,7 @@ class Editor extends React.Component<IProps, {}> {
     this.mountEventListeners();
 
     const { imageData, activeLabelType } = this.props;
-
+    console.log('EditorModel', EditorModel.canvas);
     ContextManager.switchCtx(ContextType.EDITOR);
     EditorActions.mountRenderEngines(activeLabelType);
     ImageLoadManager.addAndRun(this.loadImage(imageData));
@@ -53,10 +56,8 @@ class Editor extends React.Component<IProps, {}> {
 
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<{}>, snapshot?: any): void {
     const { imageData, activeLabelType } = this.props;
-
     prevProps.imageData.id !== imageData.id && ImageLoadManager.addAndRun(this.loadImage(imageData));
     prevProps.activeLabelType !== activeLabelType && EditorActions.swapSupportRenderingEngine(activeLabelType);
-
     this.updateModelAndRender();
   }
 
@@ -94,16 +95,18 @@ class Editor extends React.Component<IProps, {}> {
   };
 
   private saveLoadedImage = (image: HTMLImageElement, imageData: ImageData) => {
-    imageData.loadStatus = true;
-    this.props.updateImageDataById(imageData.id, imageData);
-    ImageRepository.store(imageData.id, image);
+    const newImageData = produce(imageData, draft => {
+      draft.loadStatus = true;
+    });
+    this.props.updateImageDataById(imageData.id, newImageData);
+    ImageRepository.store(newImageData.id, image);
     EditorActions.setActiveImage(image);
     EditorActions.setLoadingStatus(false);
     this.updateModelAndRender();
   };
 
   private handleLoadImageError = () => {
-    console.log("handleLoadImageError");
+    console.log('handleLoadImageError');
   };
 
   // =================================================================================================================
@@ -144,7 +147,7 @@ class Editor extends React.Component<IProps, {}> {
           ref={ref => (EditorModel.cursor = ref)}
           draggable={false}
         >
-          <img draggable={false} alt={"indicator"} src={EditorUtil.getIndicator(this.props.customCursorStyle)} />
+          <img draggable={false} alt={'indicator'} src={EditorUtil.getIndicator(this.props.customCursorStyle)} />
         </div>
       </div>
     );
@@ -153,12 +156,13 @@ class Editor extends React.Component<IProps, {}> {
 
 const mapDispatchToProps = {
   updateImageDataById,
+  loadDataFromLocalStorge,
 };
 
 const mapStateToProps = (state: AppState) => ({
   activeLabelType:
     state.editor.imagesData[EditorSelector.getActiveImageIndex()].groupList[EditorSelector.getActiveGroupIndex()]
-      .activeLabelType,
+      .activeLabelType || LabelType.POINT,
   activePopupType: state.general.activePopupType,
   activeLabelId:
     state.editor.imagesData[EditorSelector.getActiveImageIndex()].groupList[EditorSelector.getActiveGroupIndex()]

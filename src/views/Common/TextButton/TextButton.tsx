@@ -1,10 +1,10 @@
-import * as React from "react";
-import "./TextButton.scss";
-import classNames from "classnames";
+import * as React from 'react';
+import './TextButton.scss';
+import classNames from 'classnames';
 
 interface IProps {
   key?: string;
-  label: string;
+  label: any;
   onClick?: () => any;
   style?: React.CSSProperties;
   isActive?: boolean;
@@ -16,7 +16,7 @@ export const TextButton = (props: IProps) => {
   const { key, label, onClick, style, isActive, isDisabled, externalClassName } = props;
 
   const getClassName = () => {
-    return classNames("TextButton", externalClassName, {
+    return classNames('TextButton', externalClassName, {
       active: isActive,
       disabled: isDisabled,
     });

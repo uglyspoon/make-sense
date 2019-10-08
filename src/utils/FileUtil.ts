@@ -1,8 +1,19 @@
-import uuidv1 from "uuid/v1";
-import { ImageData } from "../store/editor/types";
+import uuidv1 from 'uuid/v1';
+import { ImageData } from '../store/editor/types';
 
 export class FileUtil {
   public static mapFileDataToImageData(fileData: File): ImageData {
+    if (JSON.parse(localStorage.getItem(fileData.name))) {
+      var newfileData = JSON.parse(localStorage.getItem(fileData.name));
+      newfileData.fileData = fileData;
+      newfileData.loadStatus = false;
+      // newfileData.groupList.forEach((item, idx) => {
+      //   item.firstLabelCreatedFlag = false;
+      //   // newfileData.groupList[idx].labelPoints = [];
+      // });
+      // console.log(newfileData);
+      return newfileData;
+    }
     return {
       id: uuidv1(),
       fileData: fileData,

@@ -1,10 +1,10 @@
-import { IRect } from "../../interfaces/IRect";
-import { RenderEngineConfig } from "../../settings/RenderEngineConfig";
-import { IPoint } from "../../interfaces/IPoint";
-import { CanvasUtil } from "../../utils/CanvasUtil";
-import { store } from "../../index";
-import { ImageData, LabelPoint } from "../../store/editor/types";
-import uuidv1 from "uuid/v1";
+import { IRect } from '../../interfaces/IRect';
+import { RenderEngineConfig } from '../../settings/RenderEngineConfig';
+import { IPoint } from '../../interfaces/IPoint';
+import { CanvasUtil } from '../../utils/CanvasUtil';
+import { store } from '../../index';
+import { ImageData, LabelPoint } from '../../store/editor/types';
+import uuidv1 from 'uuid/v1';
 import {
   updateActiveLabelId,
   updateFirstLabelCreatedFlag,
@@ -12,17 +12,17 @@ import {
   updateImageDataById,
   updateActiveLabelNameIndex,
   findNextAvailableLabelIndex,
-} from "../../store/editor/actionCreators";
-import { RectUtil } from "../../utils/RectUtil";
-import { DrawUtil } from "../../utils/DrawUtil";
-import { updateCustomCursorStyle } from "../../store/general/actionCreators";
-import { CustomCursorStyle } from "../../data/enums/CustomCursorStyle";
-import { EditorSelector } from "../../store/selectors/EditorSelector";
-import { EditorData } from "../../data/EditorData";
-import { BaseRenderEngine } from "./BaseRenderEngine";
-import { RenderEngineUtil } from "../../utils/RenderEngineUtil";
-import { LabelType } from "../../data/enums/LabelType";
-import produce from "immer";
+} from '../../store/editor/actionCreators';
+import { RectUtil } from '../../utils/RectUtil';
+import { DrawUtil } from '../../utils/DrawUtil';
+import { updateCustomCursorStyle } from '../../store/general/actionCreators';
+import { CustomCursorStyle } from '../../data/enums/CustomCursorStyle';
+import { EditorSelector } from '../../store/selectors/EditorSelector';
+import { EditorData } from '../../data/EditorData';
+import { BaseRenderEngine } from './BaseRenderEngine';
+import { RenderEngineUtil } from '../../utils/RenderEngineUtil';
+import { LabelType } from '../../data/enums/LabelType';
+import produce from 'immer';
 
 export class PointRenderEngine extends BaseRenderEngine {
   private config: RenderEngineConfig = new RenderEngineConfig();
@@ -81,7 +81,7 @@ export class PointRenderEngine extends BaseRenderEngine {
       const newImageData = produce(imageData, draft => {
         draft.groupList[activeGroupIndex].labelPoints = imageData.groupList[activeGroupIndex].labelPoints.map(
           (labelPoint: LabelPoint) => {
-            if (labelPoint.id === activeLabelPoint.id) {
+            if (activeLabelPoint && labelPoint.id === activeLabelPoint.id) {
               return {
                 ...labelPoint,
                 point: pointOnImage,
@@ -118,6 +118,9 @@ export class PointRenderEngine extends BaseRenderEngine {
   // =================================================================================================================
 
   public render(data: EditorData): void {
+    if (!data.activeImageRectOnCanvas) {
+      return;
+    }
     const activeLabelId: string = EditorSelector.getActiveLabelId();
     const highlightedLabelId: string = EditorSelector.getHighlightedLabelId();
     const imageData: ImageData = EditorSelector.getActiveImageData();
@@ -170,9 +173,9 @@ export class PointRenderEngine extends BaseRenderEngine {
 
       if (RectUtil.isPointInside({ x: 0, y: 0, ...CanvasUtil.getSize(this.canvas) }, data.mousePositionOnCanvas)) {
         RenderEngineUtil.wrapDefaultCursorStyleInCancel(data);
-        this.canvas.style.cursor = "none";
+        this.canvas.style.cursor = 'none';
       } else {
-        this.canvas.style.cursor = "default";
+        this.canvas.style.cursor = 'default';
       }
     }
   }
@@ -213,11 +216,14 @@ export class PointRenderEngine extends BaseRenderEngine {
     };
 
     if (existedLabelIndexs.length === labelsLength) {
-      alert("已经添加全部的关节");
+      alert('已经添加全部的关节');
       return;
     }
-    imageData.groupList[activeGroupIndex].labelPoints.push(labelPoint);
-    store.dispatch(updateImageDataById(imageData.id, imageData));
+
+    const newImageData = produce(imageData, draft => {
+      draft.groupList[activeGroupIndex].labelPoints.push(labelPoint);
+    });
+    store.dispatch(updateImageDataById(imageData.id, newImageData));
     store.dispatch(updateFirstLabelCreatedFlag(true));
     store.dispatch(updateActiveLabelId(labelPoint.id));
     store.dispatch(findNextAvailableLabelIndex());

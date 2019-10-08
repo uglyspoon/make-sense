@@ -1,19 +1,19 @@
-import { LabelType } from "../../data/enums/LabelType";
-import { EditorModel } from "../../staticModels/EditorModel";
-import { RectRenderEngine } from "../render/RectRenderEngine";
-import { PointRenderEngine } from "../render/PointRenderEngine";
-import { PolygonRenderEngine } from "../render/PolygonRenderEngine";
-import { IRect } from "../../interfaces/IRect";
-import { Settings } from "../../settings/Settings";
-import { RectUtil } from "../../utils/RectUtil";
-import { EditorData } from "../../data/EditorData";
-import { CanvasUtil } from "../../utils/CanvasUtil";
-import { ISize } from "../../interfaces/ISize";
-import React from "react";
-import { IPoint } from "../../interfaces/IPoint";
-import { DrawUtil } from "../../utils/DrawUtil";
-import { PrimaryEditorRenderEngine } from "../render/PrimaryEditorRenderEngine";
-import { ContextManager } from "../context/ContextManager";
+import { LabelType } from '../../data/enums/LabelType';
+import { EditorModel } from '../../staticModels/EditorModel';
+import { RectRenderEngine } from '../render/RectRenderEngine';
+import { PointRenderEngine } from '../render/PointRenderEngine';
+import { PolygonRenderEngine } from '../render/PolygonRenderEngine';
+import { IRect } from '../../interfaces/IRect';
+import { Settings } from '../../settings/Settings';
+import { RectUtil } from '../../utils/RectUtil';
+import { EditorData } from '../../data/EditorData';
+import { CanvasUtil } from '../../utils/CanvasUtil';
+import { ISize } from '../../interfaces/ISize';
+import React from 'react';
+import { IPoint } from '../../interfaces/IPoint';
+import { DrawUtil } from '../../utils/DrawUtil';
+import { PrimaryEditorRenderEngine } from '../render/PrimaryEditorRenderEngine';
+import { ContextManager } from '../context/ContextManager';
 
 export class EditorActions {
   // =================================================================================================================
@@ -127,8 +127,8 @@ export class EditorActions {
 
   public static updateMousePositionIndicator(event: React.MouseEvent<HTMLCanvasElement, MouseEvent> | MouseEvent) {
     if (!EditorModel.imageRectOnCanvas || !EditorModel.canvas) {
-      EditorModel.mousePositionIndicator.style.display = "none";
-      EditorModel.cursor.style.display = "none";
+      EditorModel.mousePositionIndicator.style.display = 'none';
+      EditorModel.cursor.style.display = 'none';
       return;
     }
 
@@ -137,8 +137,8 @@ export class EditorActions {
     const isOverCanvas: boolean = RectUtil.isPointInside(canvasRect, mousePositionOnCanvas);
 
     if (!isOverCanvas) {
-      EditorModel.mousePositionIndicator.style.display = "none";
-      EditorModel.cursor.style.display = "none";
+      EditorModel.mousePositionIndicator.style.display = 'none';
+      EditorModel.cursor.style.display = 'none';
       return;
     }
 
@@ -148,18 +148,18 @@ export class EditorActions {
       const scale = EditorModel.imageScale;
       const x: number = Math.round((mousePositionOnCanvas.x - EditorModel.imageRectOnCanvas.x) * scale);
       const y: number = Math.round((mousePositionOnCanvas.y - EditorModel.imageRectOnCanvas.y) * scale);
-      const text: string = "x: " + x + ", y: " + y;
+      const text: string = 'x: ' + x + ', y: ' + y;
 
       EditorModel.mousePositionIndicator.innerHTML = text;
-      EditorModel.mousePositionIndicator.style.left = mousePositionOnCanvas.x + 15 + "px";
-      EditorModel.mousePositionIndicator.style.top = mousePositionOnCanvas.y + 15 + "px";
-      EditorModel.mousePositionIndicator.style.display = "block";
+      EditorModel.mousePositionIndicator.style.left = mousePositionOnCanvas.x + 15 + 'px';
+      EditorModel.mousePositionIndicator.style.top = mousePositionOnCanvas.y + 15 + 'px';
+      EditorModel.mousePositionIndicator.style.display = 'block';
     } else {
-      EditorModel.mousePositionIndicator.style.display = "none";
+      EditorModel.mousePositionIndicator.style.display = 'none';
     }
 
-    EditorModel.cursor.style.left = mousePositionOnCanvas.x + "px";
-    EditorModel.cursor.style.top = mousePositionOnCanvas.y + "px";
-    EditorModel.cursor.style.display = "block";
+    EditorModel.cursor.style.left = mousePositionOnCanvas.x + 'px';
+    EditorModel.cursor.style.top = mousePositionOnCanvas.y + 'px';
+    EditorModel.cursor.style.display = 'block';
   }
 }

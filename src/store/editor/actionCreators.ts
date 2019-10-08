@@ -1,7 +1,7 @@
-import { ProjectType } from "../../data/enums/ProjectType";
-import { EditorActionTypes, ImageData } from "./types";
-import { Action } from "../Actions";
-import { LabelType } from "../../data/enums/LabelType";
+import { ProjectType } from '../../data/enums/ProjectType';
+import { EditorActionTypes, ImageData } from './types';
+import { Action } from '../Actions';
+import { LabelType } from '../../data/enums/LabelType';
 
 export function updateProjectType(projectType: ProjectType): EditorActionTypes {
   return {
@@ -35,6 +35,25 @@ export function updateActiveLabelNameIndex(activeLabelNameIndex: number): Editor
     type: Action.UPDATE_ACTIVE_LABEL_NAME_INDEX,
     payload: {
       activeLabelNameIndex,
+    },
+  };
+}
+
+export function updateLabelIndexByInfo(
+  imageIndex: number,
+  groupIndex: number,
+  labelPointIndex: number,
+  labelIndex: number,
+  labelCheckd: boolean
+): EditorActionTypes {
+  return {
+    type: Action.UPDATE_LABEL_INDEX_BY_INFO,
+    payload: {
+      imageIndex,
+      groupIndex,
+      labelPointIndex,
+      labelIndex,
+      labelCheckd,
     },
   };
 }
@@ -140,5 +159,11 @@ export function deleteGroupList(groupIndex: number) {
     payload: {
       groupIndex,
     },
+  };
+}
+
+export function loadDataFromLocalStorge() {
+  return {
+    type: Action.LOAD_DATA_FROM_LOCALSTORGE,
   };
 }

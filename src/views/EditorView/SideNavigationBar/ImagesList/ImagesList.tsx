@@ -1,20 +1,26 @@
-import React from "react";
-import { connect } from "react-redux";
-import { LabelType } from "../../../../data/enums/LabelType";
-import { ISize } from "../../../../interfaces/ISize";
-import { AppState } from "../../../../store";
+import React from 'react';
+import { connect } from 'react-redux';
+import { LabelType } from '../../../../data/enums/LabelType';
+import { ISize } from '../../../../interfaces/ISize';
+import { AppState } from '../../../../store';
 import {
   updateActiveImageIndex,
   updateActiveLabelId,
   updateActiveLabelType,
-} from "../../../../store/editor/actionCreators";
-import { ImageData } from "../../../../store/editor/types";
-import { VirtualList } from "../../../Common/VirtualList/VirtualList";
-import ImagePreview from "../ImagePreview/ImagePreview";
-import "./ImagesList.scss";
-import { ContextManager } from "../../../../logic/context/ContextManager";
-import { ContextType } from "../../../../data/enums/ContextType";
-import { EditorSelector } from "../../../../store/selectors/EditorSelector";
+  updateGroupList,
+  updateActiveGroupIndex,
+  updateLabelIndexByInfo,
+} from '../../../../store/editor/actionCreators';
+import { ImageData } from '../../../../store/editor/types';
+import { VirtualList } from '../../../Common/VirtualList/VirtualList';
+import ImagePreview from '../ImagePreview/ImagePreview';
+import './ImagesList.scss';
+import { ContextManager } from '../../../../logic/context/ContextManager';
+import { ContextType } from '../../../../data/enums/ContextType';
+import { EditorSelector } from '../../../../store/selectors/EditorSelector';
+import { EditorActions } from '../../../../logic/actions/EditorActions';
+import { RenderEngineUtil } from '../../../../utils/RenderEngineUtil';
+import { EditorModel } from '../../../../staticModels/EditorModel';
 
 interface IProps {
   activeImageIndex: number;
@@ -23,6 +29,15 @@ interface IProps {
   updateActiveLabelId: (activeLabelId: string) => any;
   updateActiveLabelType: (activeLabelType: LabelType) => any;
   activeLabelType: LabelType;
+  updateGroupList: (groupName: string) => any;
+  updateActiveGroupIndex: (groupIndex: number) => any;
+  updateLabelIndexByInfo: (
+    imageIndex: number,
+    groupIndex: number,
+    labelPointIndex: number,
+    labelIndex: number,
+    checked: boolean
+  ) => any;
 }
 
 interface IState {
@@ -42,23 +57,86 @@ class ImagesList extends React.Component<IProps, IState> {
 
   public componentDidMount(): void {
     this.updateListSize();
-    window.addEventListener("resize", this.updateListSize);
+    window.addEventListener('resize', this.updateListSize);
   }
 
   public componentWillUnmount(): void {
-    window.removeEventListener("resize", this.updateListSize);
+    window.removeEventListener('resize', this.updateListSize);
   }
 
   private updateListSize = () => {
     if (!this.imagesListRef) return;
 
     const listBoundingBox = this.imagesListRef.getBoundingClientRect();
-    this.setState({
-      size: {
-        width: listBoundingBox.width,
-        height: listBoundingBox.height,
+    this.setState(
+      {
+        size: {
+          width: listBoundingBox.width,
+          height: listBoundingBox.height,
+        },
       },
-    });
+      () => {
+        // localStorage.setItem(
+        //   'offsetHeight',
+        //   (document.getElementsByClassName('TopNavigationBar')[0] as any).offsetHeight
+        // );
+        // localStorage.setItem(
+        //   'offsetWidth',
+        //   (document.getElementsByClassName('SideNavigationBar left')[0] as any).offsetWidth
+        // );
+        // setTimeout(() => {
+        //   const editorData = EditorActions.getEditorData();
+        //   const offsetWidth = localStorage.getItem('offsetWidth');
+        //   const offsetHeight = localStorage.getItem('offsetHeight');
+        //   const showImageIndexs: number[] = (window as any).showImageIndexs || [];
+        //   const showImagesData = this.props.imagesData.filter((itme, idx) => showImageIndexs.includes(idx));
+        //   console.log('showImagesData', showImagesData.length);
+        //   showImagesData.forEach((imageData, imageIndex) => {
+        //     console.log('activeImageIndex', imageIndex);
+        //     const localData: ImageData = JSON.parse(localStorage.getItem(imageData.fileData.name));
+        //     // updateActiveImageIndex(imageIndex);
+        //     const evt_click = new MouseEvent('click', {
+        //       bubbles: true,
+        //       view: window,
+        //     });
+        //     document.querySelectorAll('.VirtualListContent .ImagePreview')[imageIndex].dispatchEvent(evt_click);
+        //     if (localData) {
+        //       localData.groupList.forEach((item, groupIndex) => {
+        //         if (groupIndex !== 0) {
+        //           updateGroupList(`person-${groupIndex}`);
+        //           updateActiveGroupIndex(groupIndex);
+        //         }
+        //         item.labelPoints.forEach((labelPoint, labelPointIndex) => {
+        //           const point = RenderEngineUtil.transferPointFromImageToCanvas(labelPoint.point, editorData);
+        //           const evt_up = new MouseEvent('mouseup', {
+        //             bubbles: true,
+        //             view: window,
+        //             clientX: point.x + +offsetWidth,
+        //             clientY: point.y + +offsetHeight,
+        //           });
+        //           const evt_down = new MouseEvent('mousedown', {
+        //             bubbles: true,
+        //             view: window,
+        //             clientX: point.x + +offsetWidth,
+        //             clientY: point.y + +offsetHeight,
+        //           });
+        //           EditorModel.canvas.dispatchEvent(evt_up);
+        //           EditorModel.canvas.dispatchEvent(evt_down);
+        //           console.log(imageIndex, groupIndex, labelPointIndex, labelPoint.labelIndex);
+        //           updateLabelIndexByInfo(
+        //             imageIndex,
+        //             groupIndex,
+        //             labelPointIndex,
+        //             labelPoint.labelIndex,
+        //             labelPoint.checked
+        //           );
+        //         });
+        //       });
+        //     }
+        //   });
+        // }, 1000);
+      }
+    );
   };
 
   private onClickHandler = (index: number) => {
@@ -77,6 +155,7 @@ class ImagesList extends React.Component<IProps, IState> {
     return (
       <ImagePreview
         key={index}
+        index={index}
         style={style}
         size={{ width: 150, height: 150 }}
         isScrolling={isScrolling}
@@ -118,6 +197,9 @@ const mapDispatchToProps = {
   updateActiveImageIndex,
   updateActiveLabelId,
   updateActiveLabelType,
+  updateLabelIndexByInfo,
+  updateActiveGroupIndex,
+  updateGroupList,
 };
 
 const mapStateToProps = (state: AppState) => ({
