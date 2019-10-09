@@ -8807,6 +8807,13 @@ react-loading@^2.0.3:
   resolved "https://registry.npm.taobao.org/react-loading/download/react-loading-2.0.3.tgz#e8138fb0c3e4674e481b320802ac7048ae14ffb9"
   integrity sha1-6BOPsMPkZ05IGzIIAqxwSK4U/7k=
 
+react-notifications-component@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npm.taobao.org/react-notifications-component/download/react-notifications-component-2.1.0.tgz#c0ff1ab754bf25f0b00d6430b1fd38133be5cc0e"
+  integrity sha1-wP8at1S/JfCwDWQwsf04EzvlzA4=
+  dependencies:
+    prop-types "^15.6.2"
+
 react-redux@^7.1.0:
   version "7.1.1"
   resolved "https://registry.npm.taobao.org/react-redux/download/react-redux-7.1.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-redux%2Fdownload%2Freact-redux-7.1.1.tgz#ce6eee1b734a7a76e0788b3309bf78ff6b34fa0a"

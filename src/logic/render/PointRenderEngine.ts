@@ -23,6 +23,7 @@ import { BaseRenderEngine } from './BaseRenderEngine';
 import { RenderEngineUtil } from '../../utils/RenderEngineUtil';
 import { LabelType } from '../../data/enums/LabelType';
 import produce from 'immer';
+import { store as storeNF } from 'react-notifications-component';
 
 export class PointRenderEngine extends BaseRenderEngine {
   private config: RenderEngineConfig = new RenderEngineConfig();
@@ -216,7 +217,17 @@ export class PointRenderEngine extends BaseRenderEngine {
     };
 
     if (existedLabelIndexs.length === labelsLength) {
-      alert('已经添加全部的关节');
+      storeNF.addNotification({
+        message: '已经添加全部的关节',
+        type: 'warning',
+        insert: 'top',
+        container: 'top-center',
+        animationIn: ['animated', 'fadeIn'],
+        animationOut: ['animated', 'fadeOut'],
+        dismiss: {
+          duration: 1000,
+        },
+      });
       return;
     }
 

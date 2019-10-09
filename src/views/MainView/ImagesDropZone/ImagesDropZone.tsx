@@ -13,6 +13,7 @@ import { PopupWindowType } from '../../../data/enums/PopupWindowType';
 import { updateActivePopupType } from '../../../store/general/actionCreators';
 import { AcceptedFileType } from '../../../data/enums/AcceptedFileType';
 import _ from 'lodash';
+import { store } from 'react-notifications-component';
 
 interface IProps {
   updateActiveImageIndex: (activeImageIndex: number) => any;
@@ -53,52 +54,67 @@ const ImagesDropZone: React.FC<IProps> = ({
     inputRef.current.click();
   };
   const handleChange = (files: File[]) => {
-    var reader = new FileReader();
-    reader.onload = function(evt) {
-      let jsonData = JSON.parse((evt.target as any).result);
+    [].slice.call(files).forEach(file => {
+      var reader = new FileReader();
+      reader.onloadend = function(evt) {
+        let jsonData = JSON.parse((evt.target as any).result);
 
-      for (let imageName in jsonData) {
-        let saveImageData = {
-          activeGroupIndex: 0,
-          fileData: {},
-          groupList: [],
-          id: uuidv1(),
-          loadStatus: false,
-        };
-        jsonData[imageName].people.forEach((groupData, groupIndex) => {
-          let pointList = _.chunk(groupData.pose_keypoints_2d, 3);
-          let labelPoints = [];
-          for (let i in pointList) {
-            if (pointList[i][2] === -1) {
-              continue;
-            }
-            labelPoints.push({
-              checked: pointList[i][2] === 1 ? true : false,
-              id: uuidv1(),
-              labelIndex: i,
-              point: {
-                x: pointList[i][0],
-                y: pointList[i][1],
-              },
-            });
-          }
-          let groupTmp = {
-            activeLabelId: uuidv1(),
-            activeLabelNameIndex: 0,
-            activeLabelType: 'POINT',
-            firstLabelCreatedFlag: true,
-            highlightedLabelId: null,
-            labelPolygons: [],
-            labelRects: [],
-            labelPoints,
+        for (let imageName in jsonData) {
+          let saveImageData = {
+            activeGroupIndex: 0,
+            fileData: {},
+            groupList: [],
+            id: uuidv1(),
+            loadStatus: false,
           };
-          saveImageData.groupList.push(groupTmp);
-        });
-        localStorage.setItem(imageName, JSON.stringify(saveImageData));
-      }
-      startEditor(ProjectType.OBJECT_DETECTION);
-    };
-    reader.readAsText(files[0]);
+          jsonData[imageName].people.forEach((groupData, groupIndex) => {
+            let pointList = _.chunk(groupData.pose_keypoints_2d, 3);
+            let labelPoints = [];
+            for (let i in pointList) {
+              if (pointList[i][2] === -1) {
+                continue;
+              }
+              labelPoints.push({
+                checked: pointList[i][2] === 1 ? true : false,
+                id: uuidv1(),
+                labelIndex: i,
+                point: {
+                  x: pointList[i][0],
+                  y: pointList[i][1],
+                },
+              });
+            }
+            let groupTmp = {
+              activeLabelId: uuidv1(),
+              activeLabelNameIndex: 0,
+              activeLabelType: 'POINT',
+              firstLabelCreatedFlag: true,
+              highlightedLabelId: null,
+              labelPolygons: [],
+              labelRects: [],
+              labelPoints,
+            };
+            saveImageData.groupList.push(groupTmp);
+          });
+          localStorage.setItem(imageName, JSON.stringify(saveImageData));
+        }
+        // startEditor(ProjectType.OBJECT_DETECTION);
+      };
+      reader.readAsText(file);
+    });
+    store.addNotification({
+      title: '导入成功!',
+      message: '可以继续导入或者开始标记',
+      type: 'success',
+      insert: 'top',
+      container: 'top-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 1000,
+        // onScreen: true,
+      },
+    });
   };
   const startEditor = (projectType: ProjectType) => {
     if (acceptedFiles.length > 0) {
@@ -110,7 +126,19 @@ const ImagesDropZone: React.FC<IProps> = ({
 
   const clearLocalStorge = () => {
     localStorage.clear();
-    alert('已清除全部缓存！');
+    store.addNotification({
+      // title: '!',
+      message: '已清除所有缓存',
+      type: 'success',
+      insert: 'top',
+      container: 'top-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 1000,
+        // onScreen: true,
+      },
+    });
   };
   const getDropZoneContent = () => {
     if (acceptedFiles.length === 0)
@@ -147,7 +175,7 @@ const ImagesDropZone: React.FC<IProps> = ({
       <div className="DropZoneButtons">
         <TextButton
           label={'导入标记'}
-          isDisabled={!acceptedFiles.length}
+          // isDisabled={!acceptedFiles.length}
           onClick={() => onClickImport()}
           style={{ marginRight: 10 }}
         />
@@ -166,6 +194,7 @@ const ImagesDropZone: React.FC<IProps> = ({
         ref={inputRef}
         accept="application/json"
         onChange={(e: any) => handleChange(e.target.files)}
+        multiple
       />
     </div>
   );

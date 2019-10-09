@@ -28,7 +28,6 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.UPDATE_ACTIVE_IMAGE_INDEX:
         draft.activeImageIndex = action.payload.activeImageIndex;
-        console.log(draft.activeImageIndex, 'draft.activeImageIndex');
         break;
       case Action.UPDATE_ACTIVE_LABEL_NAME_INDEX:
         draft.imagesData[activeImageIndex].groupList[activeGroupIndex].activeLabelNameIndex =
@@ -66,7 +65,6 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
       case Action.ADD_IMAGES_DATA:
         const addImagesData = action.payload.imageData;
         draft.imagesData = draft.imagesData.concat(addImagesData);
-        console.log('imagesData', action.payload.imageData);
 
         break;
       case Action.LOAD_DATA_FROM_LOCALSTORGE:

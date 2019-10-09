@@ -44,7 +44,6 @@ class Editor extends React.Component<IProps, {}> {
     this.mountEventListeners();
 
     const { imageData, activeLabelType } = this.props;
-    console.log('EditorModel', EditorModel.canvas);
     ContextManager.switchCtx(ContextType.EDITOR);
     EditorActions.mountRenderEngines(activeLabelType);
     ImageLoadManager.addAndRun(this.loadImage(imageData));

@@ -211,7 +211,6 @@ export class VirtualList extends React.Component<IProps, IState> {
               });
               EditorModel.canvas.dispatchEvent(evt_up);
               EditorModel.canvas.dispatchEvent(evt_down);
-              console.log(imageIndex, groupIndex, labelPointIndex, labelPoint.labelIndex);
               updateLabelIndexByInfo(
                 imageIndex,
                 groupIndex,

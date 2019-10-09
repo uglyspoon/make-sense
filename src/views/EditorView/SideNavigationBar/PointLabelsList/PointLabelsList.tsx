@@ -1,21 +1,22 @@
-import React from "react";
-import { ISize } from "../../../../interfaces/ISize";
-import Scrollbars from "react-custom-scrollbars";
-import { ImageData, LabelPoint } from "../../../../store/editor/types";
-import "./PointLabelsList.scss";
+import React from 'react';
+import { ISize } from '../../../../interfaces/ISize';
+import Scrollbars from 'react-custom-scrollbars';
+import { ImageData, LabelPoint } from '../../../../store/editor/types';
+import './PointLabelsList.scss';
 import {
   updateActiveLabelId,
   updateActiveLabelNameIndex,
   updateImageDataById,
   findNextAvailableLabelIndex,
-} from "../../../../store/editor/actionCreators";
-import { AppState } from "../../../../store";
-import { connect } from "react-redux";
-import * as _ from "lodash";
-import LabelInputField from "../LabelInputField/LabelInputField";
-import EmptyLabelList from "../EmptyLabelList/EmptyLabelList";
-import { EditorSelector } from "../../../../store/selectors/EditorSelector";
-import produce from "immer";
+} from '../../../../store/editor/actionCreators';
+import { AppState } from '../../../../store';
+import { connect } from 'react-redux';
+import * as _ from 'lodash';
+import LabelInputField from '../LabelInputField/LabelInputField';
+import EmptyLabelList from '../EmptyLabelList/EmptyLabelList';
+import { EditorSelector } from '../../../../store/selectors/EditorSelector';
+import produce from 'immer';
+import { store as storeNF } from 'react-notifications-component';
 
 interface IProps {
   size: ISize;
@@ -80,7 +81,17 @@ const PointLabelsList: React.FC<IProps> = ({
           );
           if (alreadyHasIndex) {
             // console.log("labelNameIndex", labelNameIndex);
-            alert("已经标记过这个部位了");
+            storeNF.addNotification({
+              message: '已经标记过这个部位了',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-center',
+              animationIn: ['animated', 'fadeIn'],
+              animationOut: ['animated', 'fadeOut'],
+              dismiss: {
+                duration: 1000,
+              },
+            });
             alreadyFlag = true;
             return currentLabel;
           }
@@ -127,7 +138,7 @@ const PointLabelsList: React.FC<IProps> = ({
   return (
     <div className="PointLabelsList" style={listStyle} onClickCapture={onClickHandler}>
       {labelPoints.length === 0 ? (
-        <EmptyLabelList labelBefore={"标记第一个点"} labelAfter={"这张图片还没有标注"} />
+        <EmptyLabelList labelBefore={'标记第一个点'} labelAfter={'这张图片还没有标注'} />
       ) : (
         <Scrollbars>
           <div className="PointLabelsListContent" style={listStyleContent}>

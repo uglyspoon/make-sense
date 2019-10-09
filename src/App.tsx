@@ -1,16 +1,17 @@
-import React from "react";
-import "./App.scss";
-import EditorView from "./views/EditorView/EditorView";
-import MainView from "./views/MainView/MainView";
-import { ProjectType } from "./data/enums/ProjectType";
-import { AppState } from "./store";
-import { connect } from "react-redux";
-import PopupView from "./views/PopupView/PopupView";
-import MobileMainView from "./views/MobileMainView/MobileMainView";
-import { ISize } from "./interfaces/ISize";
-import { Settings } from "./settings/Settings";
-import { SizeItUpView } from "./views/SizeItUpView/SizeItUpView";
-import { PlatformModel } from "./staticModels/PlatformModel";
+import React from 'react';
+import './App.scss';
+import EditorView from './views/EditorView/EditorView';
+import MainView from './views/MainView/MainView';
+import { ProjectType } from './data/enums/ProjectType';
+import { AppState } from './store';
+import { connect } from 'react-redux';
+import PopupView from './views/PopupView/PopupView';
+import MobileMainView from './views/MobileMainView/MobileMainView';
+import { ISize } from './interfaces/ISize';
+import { Settings } from './settings/Settings';
+import { SizeItUpView } from './views/SizeItUpView/SizeItUpView';
+import { PlatformModel } from './staticModels/PlatformModel';
+import ReactNotification from 'react-notifications-component';
 
 interface IProps {
   projectType: ProjectType;
@@ -34,6 +35,7 @@ const App: React.FC<IProps> = ({ projectType, windowSize }) => {
     <div className="App">
       {selectRoute()}
       <PopupView />
+      <ReactNotification />
     </div>
   );
 };

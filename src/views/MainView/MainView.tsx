@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import "./MainView.scss";
-import { TextButton } from "../Common/TextButton/TextButton";
-import classNames from "classnames";
-import { ISize } from "../../interfaces/ISize";
-import { ImageButton } from "../Common/ImageButton/ImageButton";
-import { ISocialMedia, SocialMediaData } from "../../data/info/SocialMediaData";
-import { EditorFeatureData, IEditorFeature } from "../../data/info/EditorFeatureData";
-import { Tooltip } from "@material-ui/core";
-import Fade from "@material-ui/core/Fade";
-import withStyles from "@material-ui/core/styles/withStyles";
-import ImagesDropZone from "./ImagesDropZone/ImagesDropZone";
+import React, { useState } from 'react';
+import './MainView.scss';
+import { TextButton } from '../Common/TextButton/TextButton';
+import classNames from 'classnames';
+import { ISize } from '../../interfaces/ISize';
+import { ImageButton } from '../Common/ImageButton/ImageButton';
+import { ISocialMedia, SocialMediaData } from '../../data/info/SocialMediaData';
+import { EditorFeatureData, IEditorFeature } from '../../data/info/EditorFeatureData';
+import { Tooltip } from '@material-ui/core';
+import Fade from '@material-ui/core/Fade';
+import withStyles from '@material-ui/core/styles/withStyles';
+import ImagesDropZone from './ImagesDropZone/ImagesDropZone';
+import 'react-notifications-component/dist/theme.css';
 
 const MainView: React.FC = () => {
   const [projectInProgress, setProjectInProgress] = useState(false);
@@ -19,7 +20,7 @@ const MainView: React.FC = () => {
     setProjectInProgress(true);
   };
   const jumpToRegular = () => {
-    window.location.href = "https://uglyspoon.github.io/regular/";
+    window.location.href = 'https://uglyspoon.github.io/regular/';
   };
 
   const endProject = () => {
@@ -28,7 +29,7 @@ const MainView: React.FC = () => {
   };
 
   const getClassName = () => {
-    return classNames("MainView", {
+    return classNames('MainView', {
       InProgress: projectInProgress,
       Canceled: !projectInProgress && projectCanceled,
     });
@@ -36,8 +37,8 @@ const MainView: React.FC = () => {
 
   const DarkTooltip = withStyles(theme => ({
     tooltip: {
-      backgroundColor: "#171717",
-      color: "#ffffff",
+      backgroundColor: '#171717',
+      color: '#ffffff',
       boxShadow: theme.shadows[1],
       fontSize: 11,
       maxWidth: 120,
@@ -91,7 +92,7 @@ const MainView: React.FC = () => {
       </div>
 
       <div className="LeftColumn">
-        <div className={"LogoWrapper"}>
+        <div className={'LogoWrapper'}>
           {/* <img draggable={false} alt={"main-logo"} src={"img/main-image-color.png"} /> */}
           {/* <div /> */}
         </div>
@@ -99,15 +100,15 @@ const MainView: React.FC = () => {
         <div className="TriangleVertical">
           <div className="TriangleVerticalContent" />
         </div>
-        {projectInProgress && <TextButton label={"返回"} onClick={endProject} />}
+        {projectInProgress && <TextButton label={'返回'} onClick={endProject} />}
       </div>
       <div className="RightColumn">
         <div />
         <ImagesDropZone />
         {/* <div className="SocialMediaWrapper">{getSocialMediaButtons({ width: 30, height: 30 })}</div> */}
         <div className="SocialMediaWrapper"></div>
-        <TextButton label={"常规标记"} onClick={jumpToRegular} />
-        {!projectInProgress && <TextButton label={"关节标记"} onClick={startProject} />}
+        <TextButton label={'常规标记'} onClick={jumpToRegular} />
+        {!projectInProgress && <TextButton label={'关节标记'} onClick={startProject} />}
       </div>
     </div>
   );
