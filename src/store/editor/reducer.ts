@@ -64,6 +64,7 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.ADD_IMAGES_DATA:
         const addImagesData = action.payload.imageData;
+        console.log('addImagesData', addImagesData);
         draft.imagesData = draft.imagesData.concat(addImagesData);
 
         break;
@@ -127,5 +128,6 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
     }
   });
+  console.log(result);
   return result;
 }

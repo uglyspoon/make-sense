@@ -38,6 +38,12 @@
         animation-name: cssAnimationShow;
         animation-fill-mode: forwards;
       }
+
+      .GenericYesNoPopup {
+        animation-duration: 1.5s;
+        animation-name: cssAnimationShow;
+        animation-fill-mode: forwards;
+      }
     }
 
     .LeftColumn {
@@ -130,7 +136,7 @@
     //   width: 220px;
     //   user-select: none;
     // }
-    > div {
+    >div {
       width: 220px;
       user-select: none;
     }
@@ -174,14 +180,16 @@
     width: 0;
   }
 
-  > .TextButton {
+  >.TextButton {
     position: absolute;
     right: 20px;
     bottom: 20px;
-    & + .TextButton {
+
+    &+.TextButton {
       right: 150px;
     }
   }
+
   // > .TextButton:first-of-type {
 
   // }
@@ -196,6 +204,7 @@
   background-color: transparent;
   overflow: hidden;
 }
+
 .TriangleVerticalContent {
   width: 200px;
   height: 100%;
@@ -237,7 +246,7 @@
       user-select: none;
     }
 
-    > img {
+    >img {
       filter: brightness(0) invert(1);
       max-width: 60px;
       max-height: 60px;
@@ -252,10 +261,12 @@
     opacity: 0;
     width: 0;
   }
+
   60% {
     opacity: 0;
     width: 400px;
   }
+
   100% {
     opacity: 1;
     width: 400px;
@@ -267,10 +278,12 @@
     opacity: 1;
     width: 400px;
   }
+
   40% {
     opacity: 0;
     width: 400px;
   }
+
   100% {
     opacity: 0;
     width: 0;

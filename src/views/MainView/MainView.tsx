@@ -11,6 +11,7 @@ import Fade from '@material-ui/core/Fade';
 import withStyles from '@material-ui/core/styles/withStyles';
 import ImagesDropZone from './ImagesDropZone/ImagesDropZone';
 import 'react-notifications-component/dist/theme.css';
+import LoginPopup from '../PopupView/LoginPopup/LoginPopup';
 
 const MainView: React.FC = () => {
   const [projectInProgress, setProjectInProgress] = useState(false);
@@ -104,7 +105,8 @@ const MainView: React.FC = () => {
       </div>
       <div className="RightColumn">
         <div />
-        <ImagesDropZone />
+        {/* <ImagesDropZone /> */}
+        {projectInProgress && <LoginPopup />}
         {/* <div className="SocialMediaWrapper">{getSocialMediaButtons({ width: 30, height: 30 })}</div> */}
         <div className="SocialMediaWrapper"></div>
         <TextButton label={'常规标记'} onClick={jumpToRegular} />

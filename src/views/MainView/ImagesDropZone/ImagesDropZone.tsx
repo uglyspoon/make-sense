@@ -50,9 +50,11 @@ const ImagesDropZone: React.FC<IProps> = ({
     accept: AcceptedFileType.IMAGE,
     onDrop,
   });
+
   const onClickImport = () => {
     inputRef.current.click();
   };
+
   const handleChange = (files: File[]) => {
     [].slice.call(files).forEach(file => {
       var reader = new FileReader();
