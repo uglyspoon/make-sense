@@ -21,6 +21,8 @@ import { EditorSelector } from '../../../../store/selectors/EditorSelector';
 import { EditorActions } from '../../../../logic/actions/EditorActions';
 import { RenderEngineUtil } from '../../../../utils/RenderEngineUtil';
 import { EditorModel } from '../../../../staticModels/EditorModel';
+import { postData } from '../../../../utils/HttpUtils';
+import { store } from 'react-notifications-component';
 
 interface IProps {
   activeImageIndex: number;
@@ -68,75 +70,12 @@ class ImagesList extends React.Component<IProps, IState> {
     if (!this.imagesListRef) return;
 
     const listBoundingBox = this.imagesListRef.getBoundingClientRect();
-    this.setState(
-      {
-        size: {
-          width: listBoundingBox.width,
-          height: listBoundingBox.height,
-        },
+    this.setState({
+      size: {
+        width: listBoundingBox.width,
+        height: listBoundingBox.height,
       },
-      () => {
-        // localStorage.setItem(
-        //   'offsetHeight',
-        //   (document.getElementsByClassName('TopNavigationBar')[0] as any).offsetHeight
-        // );
-        // localStorage.setItem(
-        //   'offsetWidth',
-        //   (document.getElementsByClassName('SideNavigationBar left')[0] as any).offsetWidth
-        // );
-        // setTimeout(() => {
-        //   const editorData = EditorActions.getEditorData();
-        //   const offsetWidth = localStorage.getItem('offsetWidth');
-        //   const offsetHeight = localStorage.getItem('offsetHeight');
-        //   const showImageIndexs: number[] = (window as any).showImageIndexs || [];
-        //   const showImagesData = this.props.imagesData.filter((itme, idx) => showImageIndexs.includes(idx));
-        //   console.log('showImagesData', showImagesData.length);
-        //   showImagesData.forEach((imageData, imageIndex) => {
-        //     console.log('activeImageIndex', imageIndex);
-        //     const localData: ImageData = JSON.parse(localStorage.getItem(imageData.fileData.name));
-        //     // updateActiveImageIndex(imageIndex);
-        //     const evt_click = new MouseEvent('click', {
-        //       bubbles: true,
-        //       view: window,
-        //     });
-        //     document.querySelectorAll('.VirtualListContent .ImagePreview')[imageIndex].dispatchEvent(evt_click);
-        //     if (localData) {
-        //       localData.groupList.forEach((item, groupIndex) => {
-        //         if (groupIndex !== 0) {
-        //           updateGroupList(`person-${groupIndex}`);
-        //           updateActiveGroupIndex(groupIndex);
-        //         }
-        //         item.labelPoints.forEach((labelPoint, labelPointIndex) => {
-        //           const point = RenderEngineUtil.transferPointFromImageToCanvas(labelPoint.point, editorData);
-        //           const evt_up = new MouseEvent('mouseup', {
-        //             bubbles: true,
-        //             view: window,
-        //             clientX: point.x + +offsetWidth,
-        //             clientY: point.y + +offsetHeight,
-        //           });
-        //           const evt_down = new MouseEvent('mousedown', {
-        //             bubbles: true,
-        //             view: window,
-        //             clientX: point.x + +offsetWidth,
-        //             clientY: point.y + +offsetHeight,
-        //           });
-        //           EditorModel.canvas.dispatchEvent(evt_up);
-        //           EditorModel.canvas.dispatchEvent(evt_down);
-        //           console.log(imageIndex, groupIndex, labelPointIndex, labelPoint.labelIndex);
-        //           updateLabelIndexByInfo(
-        //             imageIndex,
-        //             groupIndex,
-        //             labelPointIndex,
-        //             labelPoint.labelIndex,
-        //             labelPoint.checked
-        //           );
-        //         });
-        //       });
-        //     }
-        //   });
-        // }, 1000);
-      }
-    );
+    });
   };
 
   private onClickHandler = (index: number) => {
@@ -144,6 +83,42 @@ class ImagesList extends React.Component<IProps, IState> {
     this.props.updateActiveImageIndex(index);
     this.props.updateActiveLabelType(this.props.activeLabelType);
     this.props.updateActiveLabelId(null);
+    //remote request
+    const activeImageIndex = this.props.activeImageIndex;
+    console.log(this.props.imagesData[activeImageIndex]);
+    const data = {
+      id: this.props.imagesData[activeImageIndex].fileData.name,
+      point: JSON.stringify(this.props.imagesData[activeImageIndex].groupList),
+    };
+
+    postData('/mark/sign/mark', data).then(resJson => {
+      if (resJson.status !== 200) {
+        store.addNotification({
+          title: '服务器保存出错,请联系开发人员 @tuguang , @chaihang',
+          message: resJson.message,
+          type: 'warning',
+          insert: 'top',
+          container: 'top-center',
+          animationIn: ['animated', 'fadeIn'],
+          animationOut: ['animated', 'fadeOut'],
+          dismiss: {
+            duration: 1000,
+          },
+        });
+      } else {
+        store.addNotification({
+          message: '保存成功',
+          type: 'success',
+          insert: 'top',
+          container: 'top-center',
+          animationIn: ['animated', 'fadeIn'],
+          animationOut: ['animated', 'fadeOut'],
+          dismiss: {
+            duration: 500,
+          },
+        });
+      }
+    });
   };
 
   private renderImagePreview = (

@@ -8821,11 +8821,6 @@ react-lifecycles-compat@^3.0.2:
   resolved "https://registry.npm.taobao.org/react-lifecycles-compat/download/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha1-TxonOv38jzSIqMUWv9p4+HI1I2I=
 
-react-loading@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.npm.taobao.org/react-loading/download/react-loading-2.0.3.tgz#e8138fb0c3e4674e481b320802ac7048ae14ffb9"
-  integrity sha1-6BOPsMPkZ05IGzIIAqxwSK4U/7k=
-
 react-notifications-component@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/react-notifications-component/download/react-notifications-component-2.1.0.tgz#c0ff1ab754bf25f0b00d6430b1fd38133be5cc0e"

@@ -56,15 +56,14 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         draft.imagesData = state.imagesData.map((imageData: ImageData) =>
           imageData.id === action.payload.id ? action.payload.newImageData : imageData
         );
-        draft.imagesData.forEach((item, idx) => {
-          if (item.groupList.some(ele => !!ele.activeLabelId)) {
-            localStorage.setItem(item.fileData.name, JSON.stringify(item));
-          }
-        });
+        // draft.imagesData.forEach((item, idx) => {
+        //   if (item.groupList.some(ele => !!ele.activeLabelId)) {
+        //     localStorage.setItem(item.fileData.name, JSON.stringify(item));
+        //   }
+        // });
         break;
       case Action.ADD_IMAGES_DATA:
         const addImagesData = action.payload.imageData;
-        console.log('addImagesData', addImagesData);
         draft.imagesData = draft.imagesData.concat(addImagesData);
 
         break;
@@ -128,6 +127,5 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
     }
   });
-  console.log(result);
   return result;
 }

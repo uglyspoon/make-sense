@@ -22,7 +22,7 @@ import uuidv1 from 'uuid/v1';
 
 import { Scrollbars } from 'react-custom-scrollbars';
 import { LabelType } from '../../../data/enums/LabelType';
-const cookies = new Cookies();
+import { makeRequest, postData, getData } from '../../../utils/HttpUtils';
 
 interface IProps {
   updateActiveImageIndex: (activeImageIndex: number) => any;
@@ -32,60 +32,6 @@ interface IProps {
   updateImageData: (imageData: ImageData[]) => any;
   updateFirstLabelCreatedFlag: (firstLabelCreatedFlag: boolean) => any;
   addImageData: (imageData: ImageData[]) => any;
-}
-
-function makeRequest(method: string, url: string) {
-  return new Promise(function(resolve, reject) {
-    let xhr = new XMLHttpRequest();
-    xhr.open(method, url);
-    xhr.responseType = 'blob';
-    xhr.onload = function() {
-      if (this.status >= 200 && this.status < 300) {
-        resolve(xhr.response);
-      } else {
-        reject({
-          status: this.status,
-          statusText: xhr.statusText,
-        });
-      }
-    };
-    xhr.onerror = function() {
-      reject({
-        status: this.status,
-        statusText: xhr.statusText,
-      });
-    };
-    xhr.send();
-  });
-}
-
-function postData(url: string, data: object): Promise<any> {
-  // Default options are marked with *
-  return fetch(url, {
-    body: JSON.stringify(data), // must match 'Content-Type' header
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    mode: 'cors',
-    // credentials: 'same-origin', // include, same-origin, *omit
-    headers: {
-      Authorization: cookies.get('token'),
-      'content-type': 'application/json',
-    },
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-  }).then(response => response.json()); // parses response to JSON
-}
-
-function getData(url: string): Promise<any> {
-  // Default options are marked with *
-  return fetch(url, {
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    mode: 'cors',
-    // credentials: 'same-origin', // include, same-origin, *omit
-    headers: {
-      'content-type': 'application/json',
-      Authorization: cookies.get('token'),
-    },
-    method: 'GET', // *GET, POST, PUT, DELETE, etc.
-  }).then(response => response.json()); // parses response to JSON
 }
 
 const ExitProjectPopup: React.FC<IProps> = props => {
@@ -100,11 +46,12 @@ const ExitProjectPopup: React.FC<IProps> = props => {
   } = props;
 
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
-  const [username, setUsername] = useState('chaihang');
-  const [password, setPassword] = useState('dabai521');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
   const [dirList, setDirList] = useState([]);
   const [selectDirName, setSelectDirName] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const onChangeUsername = val => {
     setUsername(val.target.value);
@@ -146,12 +93,11 @@ const ExitProjectPopup: React.FC<IProps> = props => {
   const onSelectDir = dirName => {
     setSelectDirName(dirName);
 
-    postData('http://47.99.138.248/mark/sign/picList', {
+    postData('/mark/sign/picList', {
       dir: dirName, // 文件夹名称
       pageNo: 1, // 分页参数
       pageSize: 999999, // 分页参数
     }).then(resJson => {
-      console.log(resJson);
       if (resJson.status === 200) {
         importImagesDataFromHttp(resJson.data.rows);
       }
@@ -160,48 +106,57 @@ const ExitProjectPopup: React.FC<IProps> = props => {
 
   const importImagesDataFromHttp = (urlAry: any[]) => {
     let imagesData = [];
-
+    let number = 0;
+    setIsLoaded(false);
     urlAry.forEach(async (data, idx) => {
       let blob = await makeRequest('get', data.url);
       var file = new File([blob as any], data.id);
-      console.log(file);
-      // var blob = null;
-      // var xhr = new XMLHttpRequest();
-      // xhr.open('GET', data.url);
-      // xhr.responseType = 'blob';
-      // xhr.onload = function() {
-      //   console.log(idx);
-      //   blob = xhr.response;
-      //   // LoadAndDisplayFile(blob);
-      //   // var fileName = data.url.split('/').pop();
-      //   var file = new File([blob], data.id);
-      //   var tempImageData = {
-      //     activeGroupIndex: 0,
-      //     fileData: file,
-      //     groupList: [
-      //       {
-      //         activeLabelNameIndex: 0,
-      //         activeLabelType: LabelType.POINT,
-      //         activeLabelId: null,
-      //         highlightedLabelId: null,
-      //         firstLabelCreatedFlag: false,
-      //         labelRects: [],
-      //         labelPoints: [],
-      //         labelPolygons: [],
-      //       },
-      //     ],
-      //     id: uuidv1(),
-      //     loadStatus: false,
-      //   };
-
-      //   // console.log(file);
-      //   imagesData.push(tempImageData);
-      // };
-      // xhr.send();
+      const reader = new FileReader();
+      reader.onabort = () => console.log('file reading was aborted');
+      reader.onerror = () => console.log('file reading has failed');
+      reader.onload = () => {
+        var image = new Image();
+        image.src = reader.result as any;
+        image.onload = function(img) {
+          (file as any).width = (this as any).width;
+          (file as any).height = (this as any).height;
+          const groupListData = data.point
+            ? JSON.parse(data.point)
+            : [
+                {
+                  activeLabelNameIndex: 0,
+                  activeLabelType: LabelType.POINT,
+                  activeLabelId: null,
+                  highlightedLabelId: null,
+                  firstLabelCreatedFlag: false,
+                  labelRects: [],
+                  labelPoints: [],
+                  labelPolygons: [],
+                },
+              ];
+          var tempImageData = {
+            activeGroupIndex: 0,
+            fileData: file,
+            groupList: groupListData,
+            id: uuidv1(),
+            loadStatus: false,
+          };
+          imagesData.push(tempImageData);
+          number++;
+          if (number === urlAry.length) {
+            imagesData.sort(function(a, b) {
+              return +a.fileData.name - +b.fileData.name;
+            });
+            addImageData(imagesData);
+            setIsLoaded(true);
+          }
+        };
+      };
+      reader.readAsDataURL(file);
     });
   };
   const onAccept = () => {
-    postData('http://47.99.138.248/mark/igt/login', {
+    postData('/mark/igt/login', {
       username,
       password,
     }).then(function(res) {
@@ -233,7 +188,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
             // onScreen: true,
           },
         });
-        getData('http://47.99.138.248/mark/sign/getDir').then(data => {
+        getData('/mark/sign/getDir').then(data => {
           if (data.status === 200) {
             setDirList(data.data);
           }
@@ -247,20 +202,21 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     PopupActions.close();
   };
 
-  const onReject = () => {
+  const onReject = () => {};
+  const onStart = () => {
     PopupActions.close();
+    updateProjectType(ProjectType.OBJECT_DETECTION);
   };
-
   return (
     <GenericYesNoPopup
-      title={'登录'}
+      title={!isLogin ? '登录' : '选择文件夹'}
       renderContent={renderContent}
       acceptLabel={!isLogin ? '登录' : '开始标记'}
-      onAccept={onAccept}
+      onAccept={!isLogin ? onAccept : onStart}
       skipRejectButton={true}
       rejectLabel={' '}
       onReject={() => {}}
-      disableAcceptButton={isLogin && !selectDirName}
+      disableAcceptButton={(isLogin && !selectDirName) || (isLogin && !isLoaded)}
     />
   );
 };
