@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoginPopup.scss';
 import { GenericYesNoPopup } from '../GenericYesNoPopup/GenericYesNoPopup';
 import {
@@ -61,6 +61,18 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     setPassword(val.target.value);
   };
 
+  useEffect(() => {
+    if (cookies.token) {
+      getData('/mark/sign/getDir').then(data => {
+        if (data.status === 200) {
+          setDirList(data.data);
+          setIsLogin(true);
+        } else {
+          removeCookie('token');
+        }
+      });
+    }
+  }, []);
   const renderContent = () => {
     return (
       <div className="ExitProjectPopupContent">

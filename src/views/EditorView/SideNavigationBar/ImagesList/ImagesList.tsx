@@ -80,12 +80,10 @@ class ImagesList extends React.Component<IProps, IState> {
 
   private onClickHandler = (index: number) => {
     // console.log(this.props.activeLabelType);
-    this.props.updateActiveImageIndex(index);
-    this.props.updateActiveLabelType(this.props.activeLabelType);
-    this.props.updateActiveLabelId(null);
+
     //remote request
     const activeImageIndex = this.props.activeImageIndex;
-    console.log(this.props.imagesData[activeImageIndex]);
+    console.log(activeImageIndex, this.props.imagesData[activeImageIndex].groupList);
     const data = {
       id: this.props.imagesData[activeImageIndex].fileData.name,
       point: JSON.stringify(this.props.imagesData[activeImageIndex].groupList),
@@ -117,6 +115,9 @@ class ImagesList extends React.Component<IProps, IState> {
             duration: 500,
           },
         });
+        this.props.updateActiveImageIndex(index);
+        this.props.updateActiveLabelType(this.props.activeLabelType);
+        this.props.updateActiveLabelId(null);
       }
     });
   };
