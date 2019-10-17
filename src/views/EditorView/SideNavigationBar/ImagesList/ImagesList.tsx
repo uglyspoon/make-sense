@@ -83,7 +83,6 @@ class ImagesList extends React.Component<IProps, IState> {
 
     //remote request
     const activeImageIndex = this.props.activeImageIndex;
-    console.log(activeImageIndex, this.props.imagesData[activeImageIndex].groupList);
     const data = {
       id: this.props.imagesData[activeImageIndex].fileData.name,
       point: JSON.stringify(this.props.imagesData[activeImageIndex].groupList),

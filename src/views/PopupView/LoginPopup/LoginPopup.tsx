@@ -116,6 +116,10 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     });
   };
 
+  const onLogout = () => {
+    removeCookie('token');
+    window.location.reload();
+  };
   const importImagesDataFromHttp = (urlAry: any[]) => {
     let imagesData = [];
     let number = 0;
@@ -225,9 +229,9 @@ const ExitProjectPopup: React.FC<IProps> = props => {
       renderContent={renderContent}
       acceptLabel={!isLogin ? '登录' : '开始标记'}
       onAccept={!isLogin ? onAccept : onStart}
-      skipRejectButton={true}
-      rejectLabel={' '}
-      onReject={() => {}}
+      skipRejectButton={!isLogin}
+      rejectLabel={'退出登录'}
+      onReject={onLogout}
       disableAcceptButton={(isLogin && !selectDirName) || (isLogin && !isLoaded)}
     />
   );
