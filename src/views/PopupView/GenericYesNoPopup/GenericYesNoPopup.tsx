@@ -17,6 +17,7 @@ interface IProps {
   disableRejectButton?: boolean;
   onClickUpload?: () => any;
   isUpload?: boolean;
+  isLogin?: boolean;
   onClickBack?: () => any;
 }
 
@@ -33,6 +34,7 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
   disableRejectButton,
   onClickUpload,
   isUpload,
+  isLogin,
   onClickBack
 }) => {
   const [status, setMountStatus] = useState(false);
@@ -46,11 +48,13 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
   const renderNormalFooter = () => {
     return (
       <div className="Footer" >
-        <TextButton
-          label={"上传图片"}
-          onClick={onClickUpload}
-          externalClassName={"accept"}
-        />
+        {
+          isLogin && <TextButton
+            label={"上传图片"}
+            onClick={onClickUpload}
+            externalClassName={"accept"}
+          />
+        }
         {!skipRejectButton && (
           <TextButton
             label={!!rejectLabel ? rejectLabel : "不, 谢谢"}

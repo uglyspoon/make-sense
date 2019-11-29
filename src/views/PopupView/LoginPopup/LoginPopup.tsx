@@ -193,10 +193,8 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     return <div className="ExitProjectPopupContent">
       <div className="Message">
         <Scrollbars style={{ width: '100%', height: 300, fontSize: 18 }}>
-          {console.log(picListDir)}
           {picListDir.map((item, idx) => {
             // <div {...getRootProps({ className: 'DropZone' })}>{getDropZoneContent()}</div>
-
             return (
               <>
                 <p
@@ -403,6 +401,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
         onClickUpload={onClickUpload}
         onClickBack={onClickBack}
         isUpload={isUpload}
+        isLogin={isLogin}
       />
       {isOpen && (
         <Modal className={"PicModal"}>
