@@ -168,6 +168,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
   const onCreateDir = (e, userId) => {
     setIsEditingId(userId)
   }
+
   const onConfirmCreateDir = (e, userId) => {
     postData('/mark/sign/addDir', {
       "dir": dirName, // 文件夹名称
@@ -181,6 +182,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
       }
     });
   }
+
   const onCancelCreateDir = (e, userId) => {
     setIsEditingId('')
     setDirName('')
@@ -212,7 +214,6 @@ const ExitProjectPopup: React.FC<IProps> = props => {
                     </div> :
                       <span className="ShowLabel" onClick={(e) => onCreateDir(e, item.userId)} >新建文件夹</span>
                   }
-
                 </p>
                 <ul>
                   {item.list && item.list.map((ele, index) => {
