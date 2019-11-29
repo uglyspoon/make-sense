@@ -54,8 +54,8 @@ const ExitProjectPopup: React.FC<IProps> = props => {
   const { openModal, closeModal, isOpen, Modal } = useModal();
 
   const [cookies, setCookie, removeCookie] = useCookies(['token']);
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('dabai5212015');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
   const [isUpload, setIsUpload] = useState(false);
   const [dirList, setDirList] = useState([]);
@@ -229,7 +229,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
           type="file"
           style={{ display: 'none' }}
           ref={inputRef}
-          // accept="application/json"
+          accept="image/*"
           onChange={(e: any) => handleChange(e.target.files)}
           multiple
           hidden
