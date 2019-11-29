@@ -15,6 +15,9 @@ interface IProps {
   onReject: () => any;
   skipRejectButton?: boolean;
   disableRejectButton?: boolean;
+  onClickUpload?: () => any;
+  isUpload?: boolean;
+  onClickBack?: () => any;
 }
 
 export const GenericYesNoPopup: React.FC<IProps> = ({
@@ -28,6 +31,9 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
   onReject,
   skipRejectButton,
   disableRejectButton,
+  onClickUpload,
+  isUpload,
+  onClickBack
 }) => {
   const [status, setMountStatus] = useState(false);
   useEffect(() => {
@@ -37,11 +43,14 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
     }
   }, [status]);
 
-  return (
-    <div className="GenericYesNoPopup">
-      <div className="Header">{title}</div>
-      <div className="Content">{renderContent()}</div>
-      <div className="Footer">
+  const renderNormalFooter = () => {
+    return (
+      <div className="Footer" >
+        <TextButton
+          label={"上传图片"}
+          onClick={onClickUpload}
+          externalClassName={"accept"}
+        />
         {!skipRejectButton && (
           <TextButton
             label={!!rejectLabel ? rejectLabel : "不, 谢谢"}
@@ -49,16 +58,40 @@ export const GenericYesNoPopup: React.FC<IProps> = ({
             externalClassName={"reject"}
             isDisabled={disableRejectButton}
           />
-        )}
-        {!skipAcceptButton && (
-          <TextButton
-            label={!!acceptLabel ? acceptLabel : "好的"}
-            onClick={onAccept}
-            externalClassName={"accept"}
-            isDisabled={disableAcceptButton}
-          />
-        )}
-      </div>
+        )
+        }
+        {
+          !skipAcceptButton && (
+            <TextButton
+              label={!!acceptLabel ? acceptLabel : "好的"}
+              onClick={onAccept}
+              externalClassName={"accept"}
+              isDisabled={disableAcceptButton}
+            />
+          )
+        }
+      </div >
+    )
+  }
+  const renderUploadFooter = () => {
+    return <div className="Footer" >
+      {/* <TextButton
+        label={"新建文件夹"}
+        onClick={onClickUpload}
+        externalClassName={"accept"}
+      /> */}
+      <TextButton
+        label={"返回"}
+        onClick={onClickBack}
+        externalClassName={"accept"}
+      />
+    </div>
+  }
+  return (
+    <div className="GenericYesNoPopup">
+      <div className="Header">{title}</div>
+      <div className="Content">{renderContent()}</div>
+      {!isUpload ? renderNormalFooter() : renderUploadFooter()}
     </div>
   );
 };

@@ -4,11 +4,11 @@ const HOST = 'http://47.99.138.248';
 
 const cookies = new Cookies();
 export function makeRequest(method: string, url: string) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let xhr = new XMLHttpRequest();
     xhr.open(method, url);
     xhr.responseType = 'blob';
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (this.status >= 200 && this.status < 300) {
         resolve(xhr.response);
       } else {
@@ -18,7 +18,7 @@ export function makeRequest(method: string, url: string) {
         });
       }
     };
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       reject({
         status: this.status,
         statusText: xhr.statusText,
@@ -38,6 +38,17 @@ export function postData(url: string, data: object): Promise<any> {
     headers: {
       Authorization: cookies.get('token'),
       'content-type': 'application/json',
+    },
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+  }).then(response => response.json()); // parses response to JSON
+}
+
+export function postFile(url: string, data: object): Promise<any> {
+  // Default options are marked with *
+  return fetch(HOST + url, {
+    body: data as any, // must match 'Content-Type' header
+    headers: {
+      Authorization: cookies.get('token'),
     },
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
   }).then(response => response.json()); // parses response to JSON
