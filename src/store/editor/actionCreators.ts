@@ -3,6 +3,8 @@ import { EditorActionTypes, ImageData } from './types';
 import { Action } from '../Actions';
 import { LabelType } from '../../data/enums/LabelType';
 
+
+
 export function updateProjectType(projectType: ProjectType): EditorActionTypes {
   return {
     type: Action.UPDATE_PROJECT_TYPE,
@@ -95,11 +97,13 @@ export function updateImageDataById(id: string, newImageData: ImageData): Editor
   };
 }
 
-export function addImageData(imageData: ImageData[]): EditorActionTypes {
+export function addImageData(imageData: ImageData[], inital?: boolean): EditorActionTypes {
+
   return {
     type: Action.ADD_IMAGES_DATA,
     payload: {
       imageData,
+      inital
     },
   };
 }

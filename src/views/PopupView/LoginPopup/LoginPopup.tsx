@@ -9,11 +9,12 @@ import {
   updateLabelNamesList,
   updateProjectType,
   addImageData,
+  // updateDirInfo
 } from '../../../store/editor/actionCreators';
 import { AppState } from '../../../store';
 import { connect } from 'react-redux';
 import { ProjectType } from '../../../data/enums/ProjectType';
-import { ImageData } from '../../../store/editor/types';
+import { ImageData, Dirinfo } from '../../../store/editor/types';
 import { PopupActions } from '../../../logic/actions/PopupActions';
 import TextInput from '../../Common/TextInput/TextInput';
 import { store } from 'react-notifications-component';
@@ -37,7 +38,8 @@ interface IProps {
   updateLabelNamesList: (labelNames: string[]) => any;
   updateImageData: (imageData: ImageData[]) => any;
   updateFirstLabelCreatedFlag: (firstLabelCreatedFlag: boolean) => any;
-  addImageData: (imageData: ImageData[]) => any;
+  addImageData: (imageData: ImageData[], inital?: boolean) => any;
+  // updateDirInfo: (params: Dirinfo) => any;
 }
 
 const ExitProjectPopup: React.FC<IProps> = props => {
@@ -49,6 +51,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     updateImageData,
     updateFirstLabelCreatedFlag,
     addImageData,
+    // updateDirInfo
   } = props;
 
   const { openModal, closeModal, isOpen, Modal } = useModal();
@@ -157,7 +160,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     postData('/mark/sign/picList', {
       dir: dirName, // 文件夹名称
       pageNo: 1, // 分页参数
-      pageSize: 999999, // 分页参数
+      pageSize: 100, // 分页参数
     }).then(resJson => {
       if (resJson.status === 200) {
         setPicList(resJson.data.rows)
@@ -175,7 +178,6 @@ const ExitProjectPopup: React.FC<IProps> = props => {
       "userId": userId      // 文件夹对应用户
     }).then(resJson => {
       if (resJson.status === 200) {
-        console.log(resJson)
         onClickUpload()
         setIsEditingId('')
         setDirName('')
@@ -217,7 +219,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
                 </p>
                 <ul>
                   {item.list && item.list.map((ele, index) => {
-                    return <li><img src={require('./dir.svg')} /><span className="DirName">{ele}</span>
+                    return <li key={index}><img src={require('./dir.svg')} /><span className="DirName">{ele}</span>
                       <span className="ShowLabel" onClick={(e) => onOpenModal(e, ele)} >查看</span>
                       <span className="ShowLabel ImportLabel" onClick={() => onClickImport(item.userId, ele)}>导入</span></li>
                   })}
@@ -239,27 +241,16 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     </div>
   }
 
-  const onSelectPicList = dirName => {
-    setSelectDirName(dirName);
-
-    postData('/mark/sign/picList', {
-      dir: dirName, // 文件夹名称
-      pageNo: 1, // 分页参数
-      pageSize: 999999, // 分页参数
-    }).then(resJson => {
-      if (resJson.status === 200) {
-        console.log('rows', resJson.data.rows)
-      }
-    });
-  };
-
   const onSelectDir = dirName => {
+    setCookie('dirName', dirName);
+    setCookie('pageNo', 1);
+    setCookie('pageSize', 10);
     setSelectDirName(dirName);
 
     postData('/mark/sign/picList', {
       dir: dirName, // 文件夹名称
       pageNo: 1, // 分页参数
-      pageSize: 999999, // 分页参数
+      pageSize: 10, // 分页参数
     }).then(resJson => {
       if (resJson.status === 200) {
         importImagesDataFromHttp(resJson.data.rows);
@@ -314,7 +305,7 @@ const ExitProjectPopup: React.FC<IProps> = props => {
             imagesData.sort(function (a, b) {
               return +a.fileData.name - +b.fileData.name;
             });
-            addImageData(imagesData);
+            addImageData(imagesData, true);
             setIsLoaded(true);
           }
         };

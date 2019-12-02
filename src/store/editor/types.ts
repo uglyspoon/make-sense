@@ -4,12 +4,20 @@ import { Action } from '../Actions';
 import { LabelType } from '../../data/enums/LabelType';
 import { IPoint } from '../../interfaces/IPoint';
 
+
+export type Dirinfo = {
+  dirName: string;
+  pageNo: number;
+  pageSize: number;
+};
+
 export type LabelRect = {
   id: string;
   labelIndex: number;
   checked: boolean;
   rect: IRect;
 };
+
 
 export type LabelPoint = {
   id: string;
@@ -58,6 +66,13 @@ export type GroupType = {
   labelPolygons: LabelPolygon[];
 };
 
+
+// interface UpdateDirInfo {
+//   type: typeof Action.UPDATE_DIR_INFO;
+//   payload: {
+//     params: Dirinfo;
+//   };
+// }
 interface UpdateProjectType {
   type: typeof Action.UPDATE_PROJECT_TYPE;
   payload: {
@@ -127,6 +142,7 @@ interface AddImageData {
   type: typeof Action.ADD_IMAGES_DATA;
   payload: {
     imageData: ImageData[];
+    inital?: boolean;
   };
 }
 

@@ -64,9 +64,14 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.ADD_IMAGES_DATA:
         const addImagesData = action.payload.imageData;
-        draft.imagesData = draft.imagesData.concat(addImagesData);
+        if (action.payload.inital) {
+          draft.imagesData = addImagesData
+        } else {
+          draft.imagesData = draft.imagesData.concat(addImagesData);
+        }
 
         break;
+
       case Action.LOAD_DATA_FROM_LOCALSTORGE:
         draft.imagesData.forEach((item, idx) => {
           if (localStorage.getItem(item.fileData.name)) {

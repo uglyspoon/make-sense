@@ -56,7 +56,7 @@ const TopNavigationBar: React.FC<IProps> = ({
         <div>
           <div
             className="Header"
-            // onClick={() => updateActivePopupType(PopupWindowType.EXIT_PROJECT)}
+          // onClick={() => updateActivePopupType(PopupWindowType.EXIT_PROJECT)}
           >
             {/* <img draggable={false} alt={"make-sense"} src={"/make-sense-ico-transparent.png"} />
             Make Sense */}

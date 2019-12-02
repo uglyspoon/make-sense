@@ -99,7 +99,12 @@ export class EditorSelector {
   }
 
   public static getActiveLabelType(): LabelType {
-    return EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].activeLabelType;
+    if (EditorSelector.getActiveImageData()) {
+      return EditorSelector.getActiveImageData().groupList[EditorSelector.getActiveGroupIndex()].activeLabelType;
+    } else {
+      return LabelType.POINT
+    }
+
   }
 
   public static getFirstLabelCreatedFlag(): boolean {

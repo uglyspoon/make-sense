@@ -10,9 +10,10 @@ import {
   updateGroupList,
   updateActiveGroupIndex,
   updateLabelIndexByInfo,
+  addImageData
 } from '../../../../store/editor/actionCreators';
 import { ImageData } from '../../../../store/editor/types';
-import { VirtualList } from '../../../Common/VirtualList/VirtualList';
+import VirtualList from '../../../Common/VirtualList/VirtualList';
 import ImagePreview from '../ImagePreview/ImagePreview';
 import './ImagesList.scss';
 import { ContextManager } from '../../../../logic/context/ContextManager';
@@ -40,6 +41,7 @@ interface IProps {
     labelIndex: number,
     checked: boolean
   ) => any;
+  addImageData: (imageData: ImageData[]) => any;
 }
 
 interface IState {
@@ -79,8 +81,6 @@ class ImagesList extends React.Component<IProps, IState> {
   };
 
   private onClickHandler = (index: number) => {
-    // console.log(this.props.activeLabelType);
-
     //remote request
     const activeImageIndex = this.props.activeImageIndex;
     const data = {
@@ -127,6 +127,7 @@ class ImagesList extends React.Component<IProps, IState> {
     isVisible: boolean,
     style: React.CSSProperties
   ) => {
+
     return (
       <ImagePreview
         key={index}
@@ -175,6 +176,7 @@ const mapDispatchToProps = {
   updateLabelIndexByInfo,
   updateActiveGroupIndex,
   updateGroupList,
+  addImageData
 };
 
 const mapStateToProps = (state: AppState) => ({

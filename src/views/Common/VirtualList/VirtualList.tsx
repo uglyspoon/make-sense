@@ -9,42 +9,51 @@ import _ from 'lodash';
 import { EditorActions } from '../../../logic/actions/EditorActions';
 import { EditorSelector } from '../../../store/selectors/EditorSelector';
 import { ImageData } from '../../../store/editor/types';
-import {
-  updateGroupList,
-  updateActiveGroupIndex,
-  updateLabelIndexByInfo,
-  updateActiveImageIndex,
-} from '../../../store/editor/actionCreators';
+import { store } from 'react-notifications-component';
+import uuidv1 from 'uuid/v1';
+import { LabelType } from '../../../data/enums/LabelType';
 import { RenderEngineUtil } from '../../../utils/RenderEngineUtil';
 import { EditorModel } from '../../../staticModels/EditorModel';
-
+import { postData, makeRequest } from '../../../utils/HttpUtils';
+import { useCookies, Cookies } from 'react-cookie';
+import { connect } from 'react-redux';
+import {
+  addImageData
+} from '../../../store/editor/actionCreators';
 interface IProps {
   size: ISize;
   childCount: number;
   childSize: ISize;
   childRender: (index: number, isScrolling: boolean, isVisible: boolean, style: React.CSSProperties) => any;
   overScanHeight?: number;
+  addImageData: (imageData: ImageData[]) => any;
 }
 
 interface IState {
   viewportRect: IRect;
   isScrolling: boolean;
+  loading: boolean;
+  isCompleted: boolean;
 }
 
-export class VirtualList extends React.Component<IProps, IState> {
+// const [cookies , setCookie, removeCookie] = useCookies(['token']);
+const cookies = new Cookies()
+
+
+class VirtualList extends React.Component<IProps, IState> {
   private gridSize: ISize;
   private contentSize: ISize;
   private childAnchors: IPoint[];
   private scrollbars: Scrollbars;
-  private loading: boolean;
 
   constructor(props) {
     super(props);
     this.state = {
       viewportRect: null,
       isScrolling: false,
+      loading: false,
+      isCompleted: false,
     };
-    this.loading = false;
   }
 
   public componentDidMount(): void {
@@ -110,6 +119,44 @@ export class VirtualList extends React.Component<IProps, IState> {
   };
 
   private onScroll = values => {
+    if (values.top === 1 && !this.state.isCompleted) {
+      if (this.state.loading) {
+        store.addNotification({
+          title: '操作频率太快啦～请稍候',
+          message: '图片正在加载中.....',
+          type: 'warning',
+          insert: 'top',
+          container: 'top-center',
+          animationIn: ['animated', 'fadeIn'],
+          animationOut: ['animated', 'fadeOut'],
+          dismiss: {
+            duration: 1000,
+            // onScreen: true,
+          },
+        });
+        return
+      }
+      this.setState({
+        loading: true
+      })
+      postData('/mark/sign/picList', {
+        dir: cookies.get('dirName'), // 文件夹名称
+        pageNo: +cookies.get('pageNo') + 1, // 分页参数
+        pageSize: +cookies.get('pageSize'), // 分页参数
+      }).then(resJson => {
+        if (resJson.status === 200) {
+          cookies.set('pageNo', +cookies.get('pageNo') + 1)
+          if (resJson.data.rows.length < +cookies.get('pageSize')) {
+            this.setState({
+              isCompleted: true
+            })
+          } else {
+            this.importImagesDataFromHttp(resJson.data.rows);
+          }
+
+        }
+      });
+    }
     this.setState({
       viewportRect: {
         x: values.scrollLeft,
@@ -120,6 +167,60 @@ export class VirtualList extends React.Component<IProps, IState> {
     });
   };
 
+  private importImagesDataFromHttp = (urlAry: any[]) => {
+    const that = this
+    let imagesData = [];
+    let number = 0;
+    urlAry.forEach(async (data, idx) => {
+      let blob = await makeRequest('get', data.url);
+      var file = new File([blob as any], data.id);
+      const reader = new FileReader();
+      reader.onabort = () => console.log('file reading was aborted');
+      reader.onerror = () => console.log('file reading has failed');
+      reader.onload = () => {
+        var image = new Image();
+        image.src = reader.result as any;
+        image.onload = function (img) {
+          (file as any).width = (this as any).width;
+          (file as any).height = (this as any).height;
+          const groupListData = data.point
+            ? JSON.parse(data.point)
+            : [
+              {
+                activeLabelNameIndex: 0,
+                activeLabelType: LabelType.POINT,
+                activeLabelId: null,
+                highlightedLabelId: null,
+                firstLabelCreatedFlag: false,
+                labelRects: [],
+                labelPoints: [],
+                labelPolygons: [],
+              },
+            ];
+          var tempImageData = {
+            activeGroupIndex: 0,
+            fileData: file,
+            groupList: groupListData,
+            id: uuidv1(),
+            loadStatus: false,
+          };
+          imagesData.push(tempImageData);
+          number++;
+          if (number === urlAry.length) {
+            imagesData.sort(function (a, b) {
+              return +a.fileData.name - +b.fileData.name;
+            });
+            that.props.addImageData(imagesData);
+            // setIsLoaded(true);
+            that.setState({
+              loading: false
+            })
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+  };
   private getChildren = () => {
     const { viewportRect, isScrolling } = this.state;
     const { overScanHeight, childSize } = this.props;
@@ -150,81 +251,10 @@ export class VirtualList extends React.Component<IProps, IState> {
         return children;
       }
     }, []);
-    // if (showImageIndexs && !_.isEqual(showImageIndexs, (window as any).showImageIndexs)) {
-    //   console.log(showImageIndexs, (window as any).showImageIndexs, '(window as any).showImageIndexs');
-    //   (window as any).showImageIndexs = showImageIndexs;
-    // }
 
     return result;
   };
-  // private onUpdate = () => {
-  //   const imagesData = EditorSelector.getImagesData();
-  //   const activeImageIndex = EditorSelector.getActiveImageIndex();
-  //   if (this.state.isScrolling) {
-  //     return;
-  //   }
-  //   setTimeout(() => {
-  //     localStorage.setItem(
-  //       'offsetHeight',
-  //       (document.getElementsByClassName('TopNavigationBar')[0] as any).offsetHeight
-  //     );
-  //     localStorage.setItem(
-  //       'offsetWidth',
-  //       (document.getElementsByClassName('SideNavigationBar left')[0] as any).offsetWidth
-  //     );
-  //     const editorData = EditorActions.getEditorData();
-  //     const offsetWidth = localStorage.getItem('offsetWidth');
-  //     const offsetHeight = localStorage.getItem('offsetHeight');
-  //     const newIndexs: number[] = [];
-  //     [].slice
-  //       .call(document.getElementsByClassName('ImagePreview'))
-  //       .forEach(r => newIndexs.push(+r.getAttribute('data-index')));
-  //     // const showImageIndexs: number[] = (window as any).showImageIndexs || [];
-  //     const showImagesData = imagesData.filter((itme, idx) => newIndexs.includes(idx));
-  //     showImagesData.forEach((imageData, imageIndex) => {
-  //       const localData: ImageData = JSON.parse(localStorage.getItem(imageData.fileData.name));
-  //       // updateActiveImageIndex(imageIndex);
-  //       const evt_click = new MouseEvent('click', {
-  //         bubbles: true,
-  //         view: window,
-  //       });
-  //       document.querySelectorAll('.VirtualListContent .ImagePreview')[imageIndex].dispatchEvent(evt_click);
-  //       if (localData) {
-  //         localData.groupList.forEach((item, groupIndex) => {
-  //           if (groupIndex !== 0) {
-  //             updateGroupList(`person-${groupIndex}`);
-  //             updateActiveGroupIndex(groupIndex);
-  //           }
-  //           item.labelPoints.forEach((labelPoint, labelPointIndex) => {
-  //             const point = RenderEngineUtil.transferPointFromImageToCanvas(labelPoint.point, editorData);
-  //             const evt_up = new MouseEvent('mouseup', {
-  //               bubbles: true,
-  //               view: window,
-  //               clientX: point.x + +offsetWidth,
-  //               clientY: point.y + +offsetHeight,
-  //             });
-  //             const evt_down = new MouseEvent('mousedown', {
-  //               bubbles: true,
-  //               view: window,
-  //               clientX: point.x + +offsetWidth,
-  //               clientY: point.y + +offsetHeight,
-  //             });
-  //             EditorModel.canvas.dispatchEvent(evt_up);
-  //             EditorModel.canvas.dispatchEvent(evt_down);
-  //             updateLabelIndexByInfo(
-  //               imageIndex,
-  //               groupIndex,
-  //               labelPointIndex,
-  //               labelPoint.labelIndex,
-  //               labelPoint.checked
-  //             );
-  //           });
-  //         });
-  //       }
-  //     });
-  //     //   updateActiveImageIndex(activeImageIndex);
-  //   }, 1000);
-  // };
+
   public render() {
     const displayContent = !!this.props.size && !!this.props.childSize && !!this.gridSize;
 
@@ -236,7 +266,7 @@ export class VirtualList extends React.Component<IProps, IState> {
           onScrollStart={this.onScrollStart}
           onScrollStop={this.onScrollStop}
           autoHide={true}
-          //   onUpdate={this.onUpdate}
+        //   onUpdate={this.onUpdate}
         >
           {displayContent && (
             <div className="VirtualListContent" style={this.getVirtualListContentStyle()}>
@@ -248,3 +278,13 @@ export class VirtualList extends React.Component<IProps, IState> {
     );
   }
 }
+
+
+const mapDispatchToProps = {
+  addImageData
+};
+
+export default connect(
+  () => { },
+  mapDispatchToProps
+)(VirtualList);
