@@ -118,7 +118,7 @@ class ImagePreview extends React.Component<IProps, IState> {
     };
   };
 
-  private handleLoadImageError = () => {};
+  private handleLoadImageError = () => { };
 
   private getClassName = () => {
     return classNames('ImagePreview', {
@@ -130,6 +130,7 @@ class ImagePreview extends React.Component<IProps, IState> {
     const { isChecked, style, onClick, index } = this.props;
     return (
       <div className={this.getClassName()} style={style} onClick={onClick ? onClick : undefined} data-index={index}>
+
         {!!this.state.image ? (
           [
             <div className="Foreground" key={'Foreground'} style={this.getStyle()}>
@@ -147,8 +148,8 @@ class ImagePreview extends React.Component<IProps, IState> {
             <div className="Background" key={'Background'} style={this.getStyle()} />,
           ]
         ) : (
-          <ClipLoader sizeUnit={'px'} size={30} color={Settings.SECONDARY_COLOR} loading={true} />
-        )}
+            <ClipLoader sizeUnit={'px'} size={30} color={Settings.SECONDARY_COLOR} loading={true} />
+          )}
       </div>
     );
   }

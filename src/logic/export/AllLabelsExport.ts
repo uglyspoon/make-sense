@@ -2,6 +2,7 @@ import { ExportFormatType } from "../../data/enums/ExportFormatType";
 import { IPoint } from "../../interfaces/IPoint";
 import { VGGFileData, VGGObject, VGGRegionsData } from "../../data/VGG/JSON";
 import { ImageData, LabelPolygon, GroupType, LabelPoint } from "../../store/editor/types";
+import JSZip from "jszip";
 import { EditorSelector } from "../../store/selectors/EditorSelector";
 import { saveAs } from "file-saver";
 import { ExporterUtil } from "../../utils/ExporterUtil";
@@ -21,23 +22,36 @@ export class AllLabelsExporter {
     const imagesData: ImageData[] = EditorSelector.getImagesData();
     const labelNames: string[] = EditorSelector.getLabelNames();
     const content: string = JSON.stringify(AllLabelsExporter.mapImagesDataToVGGObject(imagesData, labelNames));
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    // const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    // try {
+    //   saveAs(blob, `${ExporterUtil.getExportFileName()}.json`);
+    // } catch (error) {
+    //   // TODO
+    //   throw new Error(error);
+    // }
+  }
+
+  private static mapImagesDataToVGGObject(imagesData: ImageData[], labelNames: string[]): VGGObject {
+    let zip = new JSZip();
+    const res = imagesData.reduce((data: VGGObject, image: ImageData) => {
+      const fileData: VGGFileData = AllLabelsExporter.mapImageDataToVGGFileData(image, labelNames);
+      if (!!fileData) {
+        // data[image.fileData.name] = fileData;
+        // const fileName: string = image.fileData.name.replace(/\.[^/.]+$/, ".txt");
+        zip.file(`${image.fileData.name}.json`, JSON.stringify(fileData));
+      }
+      return data;
+    }, {});
+
     try {
-      saveAs(blob, `${ExporterUtil.getExportFileName()}.json`);
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        saveAs(content, `${ExporterUtil.getExportFileName()}.zip`);
+      });
     } catch (error) {
       // TODO
       throw new Error(error);
     }
-  }
-
-  private static mapImagesDataToVGGObject(imagesData: ImageData[], labelNames: string[]): VGGObject {
-    return imagesData.reduce((data: VGGObject, image: ImageData) => {
-      const fileData: VGGFileData = AllLabelsExporter.mapImageDataToVGGFileData(image, labelNames);
-      if (!!fileData) {
-        data[image.fileData.name] = fileData;
-      }
-      return data;
-    }, {});
+    return res
   }
 
   private static mapImageDataToVGGFileData(imageData: ImageData, labelNames: string[]): VGGFileData {

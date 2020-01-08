@@ -141,8 +141,22 @@ const ExitProjectPopup: React.FC<IProps> = props => {
     files.length && setIsUploading(true)
     postFile('/mark/sign/upload', formdata).then(data => {
       if (data.status === 200) {
-        console.log('success', data)
         setIsUploading(false)
+      } else {
+        setIsUploading(false)
+        store.addNotification({
+          title: '上传出错',
+          message: data.message,
+          type: 'danger',
+          insert: 'top',
+          container: 'top-center',
+          animationIn: ['animated', 'fadeIn'],
+          animationOut: ['animated', 'fadeOut'],
+          dismiss: {
+            duration: 3000,
+            // onScreen: true,
+          },
+        });
       }
     });
   }
@@ -423,15 +437,17 @@ const ExitProjectPopup: React.FC<IProps> = props => {
           </div>
         </Modal>
       )}
-      {isUploading ?
-        <div className="Blocker">
-          <div>
-            <ReactLoading type={'balls'} color={'#fff'} width={70} />
-            <p>上传中...</p>
-            <p>Tips: 上传大量图片需要等待更长时间.</p>
+      {
+        isUploading ?
+          <div className="Blocker">
+            <div>
+              <ReactLoading type={'balls'} color={'#fff'} width={70} />
+              <p>上传中...</p>
+              <p>Tips: 上传大量图片需要等待更长时间.</p>
+            </div>
           </div>
-        </div>
-        : null}
+          : null
+      }
     </>
 
   );

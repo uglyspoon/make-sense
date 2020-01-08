@@ -3,3 +3,30 @@
   flex: 1;
   overflow: hidden;
 }
+
+.SearchBox {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 5px;
+
+  .TextInput {
+    height: 42px;
+  }
+
+  >span {
+    display: block;
+    width: 100px;
+    text-align: center;
+    background: #1BA0FA;
+    border-radius: 8px;
+    color: #fff;
+    margin: 0 8px;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+
+  }
+}
+
+// SearchBoxInput

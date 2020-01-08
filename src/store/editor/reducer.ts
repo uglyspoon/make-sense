@@ -10,7 +10,8 @@ const initialState: EditorState = {
   projectName: 'my_project',
   imagesData: [],
   projectType: null,
-  labelNames: ['左手心', '右手心', '左脚跟', '左脚尖', '右脚跟', '右脚尖'],
+  // labelNames: ['左手心', '右手心', '左脚跟', '左脚尖', '右脚跟', '右脚尖'],
+  labelNames: ["鼻子", "脖子", "右肩", "左肩", "右肘", "左肘", "右手腕", "左手腕", "臀", "右髋", "右膝", "右脚踝", "左髋", "左膝", "左脚踝", "右眼", "左眼", "右耳", "左耳", "左脚大指", "左脚小指", "左脚跟", "右脚大指", "右脚小指", "右脚跟"]
 };
 
 export function editorReducer(state = initialState, action: EditorActionTypes): EditorState {

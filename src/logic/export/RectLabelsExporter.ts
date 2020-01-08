@@ -40,7 +40,7 @@ export class RectLabelsExporter {
     });
 
     try {
-      zip.generateAsync({ type: "blob" }).then(function(content) {
+      zip.generateAsync({ type: "blob" }).then(function (content) {
         saveAs(content, `${ExporterUtil.getExportFileName()}.zip`);
       });
     } catch (error) {
@@ -84,7 +84,7 @@ export class RectLabelsExporter {
     });
 
     try {
-      zip.generateAsync({ type: "blob" }).then(function(content) {
+      zip.generateAsync({ type: "blob" }).then(function (content) {
         saveAs(content, `${ExporterUtil.getExportFileName()}.zip`);
       });
     } catch (error) {

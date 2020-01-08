@@ -119,7 +119,9 @@ class VirtualList extends React.Component<IProps, IState> {
   };
 
   private onScroll = values => {
+
     if (values.top === 1 && !this.state.isCompleted) {
+      console.log(this.state.loading)
       if (this.state.loading) {
         store.addNotification({
           title: '操作频率太快啦～请稍候',
@@ -172,6 +174,7 @@ class VirtualList extends React.Component<IProps, IState> {
     let imagesData = [];
     let number = 0;
     urlAry.forEach(async (data, idx) => {
+      console.log('idx', idx)
       let blob = await makeRequest('get', data.url);
       var file = new File([blob as any], data.id);
       const reader = new FileReader();
@@ -206,6 +209,7 @@ class VirtualList extends React.Component<IProps, IState> {
           };
           imagesData.push(tempImageData);
           number++;
+          console.log('number', number, urlAry.length)
           if (number === urlAry.length) {
             imagesData.sort(function (a, b) {
               return +a.fileData.name - +b.fileData.name;

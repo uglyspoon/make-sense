@@ -22,8 +22,11 @@ import { EditorSelector } from '../../../../store/selectors/EditorSelector';
 import { EditorActions } from '../../../../logic/actions/EditorActions';
 import { RenderEngineUtil } from '../../../../utils/RenderEngineUtil';
 import { EditorModel } from '../../../../staticModels/EditorModel';
-import { postData } from '../../../../utils/HttpUtils';
+import { useCookies, Cookies } from 'react-cookie';
+import { postData, makeRequest } from '../../../../utils/HttpUtils';
 import { store } from 'react-notifications-component';
+import TextInput from '../../../Common/TextInput/TextInput';
+import uuidv1 from 'uuid/v1';
 
 interface IProps {
   activeImageIndex: number;
@@ -46,7 +49,9 @@ interface IProps {
 
 interface IState {
   size: ISize;
+  searchText: string;
 }
+const cookies = new Cookies()
 
 class ImagesList extends React.Component<IProps, IState> {
   private imagesListRef: HTMLDivElement;
@@ -56,6 +61,7 @@ class ImagesList extends React.Component<IProps, IState> {
 
     this.state = {
       size: null,
+      searchText: '',
     };
   }
 
@@ -121,6 +127,92 @@ class ImagesList extends React.Component<IProps, IState> {
     });
   };
 
+  private onChangeSearchText = (e) => {
+    this.setState({
+      searchText: e.target.value
+    })
+  }
+  private importImagesDataFromHttp = (urlAry: any[]) => {
+    const that = this
+    let imagesData = [];
+    let number = 0;
+    urlAry.forEach(async (data, idx) => {
+      console.log('idx', idx)
+      let blob = await makeRequest('get', data.url);
+      var file = new File([blob as any], data.id);
+      const reader = new FileReader();
+      reader.onabort = () => console.log('file reading was aborted');
+      reader.onerror = () => console.log('file reading has failed');
+      reader.onload = () => {
+        var image = new Image();
+        image.src = reader.result as any;
+        image.onload = function (img) {
+          (file as any).width = (this as any).width;
+          (file as any).height = (this as any).height;
+          const groupListData = data.point
+            ? JSON.parse(data.point)
+            : [
+              {
+                activeLabelNameIndex: 0,
+                activeLabelType: LabelType.POINT,
+                activeLabelId: null,
+                highlightedLabelId: null,
+                firstLabelCreatedFlag: false,
+                labelRects: [],
+                labelPoints: [],
+                labelPolygons: [],
+              },
+            ];
+          var tempImageData = {
+            activeGroupIndex: 0,
+            fileData: file,
+            groupList: groupListData,
+            id: uuidv1(),
+            loadStatus: false,
+          };
+          imagesData.push(tempImageData);
+          number++;
+          console.log('number', number, urlAry.length)
+          if (number === urlAry.length) {
+            imagesData.sort(function (a, b) {
+              return +a.fileData.name - +b.fileData.name;
+            });
+            that.props.addImageData(imagesData);
+            // setIsLoaded(true);
+            // that.setState({
+            //   loading: false
+            // })
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  private onSearch = (e: React.MouseEvent) => {
+    e.preventDefault()
+    postData('/mark/sign/picList', {
+      dir: cookies.get('dirName'), // 文件夹名称
+      pageNo: +cookies.get('pageNo') + 1, // 分页参数
+      pageSize: +cookies.get('pageSize'), // 分页参数
+    }).then(resJson => {
+      if (resJson.status === 200) {
+        cookies.set('pageNo', +cookies.get('pageNo') + 1)
+        if (resJson.data.rows.length < +cookies.get('pageSize')) {
+          // this.setState({
+          //   isCompleted: true
+          // })
+        } else {
+          this.importImagesDataFromHttp(resJson.data.rows);
+        }
+
+      }
+      this.setState({
+        searchText: ''
+      })
+    });
+  }
+
   private renderImagePreview = (
     index: number,
     isScrolling: boolean,
@@ -155,6 +247,10 @@ class ImagesList extends React.Component<IProps, IState> {
         ref={ref => (this.imagesListRef = ref)}
         onClick={() => ContextManager.switchCtx(ContextType.LEFT_NAVBAR)}
       >
+        <div className="SearchBox">
+          <TextInput isPassword={false} key="SearchBoxInput" onChange={this.onChangeSearchText} />
+          <span onClick={this.onSearch}>搜索</span>
+        </div>
         {!!size && (
           <VirtualList
             size={size}
