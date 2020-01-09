@@ -37,7 +37,7 @@ const ImagesDropZone: React.FC<IProps> = ({
       reader.onload = () => {
         var image = new Image();
         image.src = reader.result as any;
-        image.onload = function(img) {
+        image.onload = function (img) {
           file.width = (this as any).width;
           file.height = (this as any).height;
         };
@@ -55,49 +55,67 @@ const ImagesDropZone: React.FC<IProps> = ({
   };
   const handleChange = (files: File[]) => {
     [].slice.call(files).forEach(file => {
+      // const imageName = file.name.replace('.json', '').split('_').shift()
       var reader = new FileReader();
-      reader.onloadend = function(evt) {
+      reader.onloadend = function (evt) {
         let jsonData = JSON.parse((evt.target as any).result);
-
-        for (let imageName in jsonData) {
-          let saveImageData = {
-            activeGroupIndex: 0,
-            fileData: {},
-            groupList: [],
-            id: uuidv1(),
-            loadStatus: false,
-          };
-          jsonData[imageName].people.forEach((groupData, groupIndex) => {
-            let pointList = _.chunk(groupData.pose_keypoints_2d, 3);
-            let labelPoints = [];
-            for (let i in pointList) {
-              if (pointList[i][2] === -1) {
-                continue;
-              }
-              labelPoints.push({
-                checked: pointList[i][2] === 1 ? true : false,
-                id: uuidv1(),
-                labelIndex: i,
-                point: {
-                  x: pointList[i][0],
-                  y: pointList[i][1],
-                },
-              });
-            }
-            let groupTmp = {
-              activeLabelId: uuidv1(),
-              activeLabelNameIndex: 0,
-              activeLabelType: 'POINT',
-              firstLabelCreatedFlag: true,
-              highlightedLabelId: null,
-              labelPolygons: [],
-              labelRects: [],
-              labelPoints,
-            };
-            saveImageData.groupList.push(groupTmp);
+        console.log('jsonData', jsonData)
+        const imageName = jsonData['image_name'];
+        if (!imageName) {
+          store.addNotification({
+            title: '导入失败!',
+            message: `${file.name}文件中找不到image_name字段`,
+            type: 'danger',
+            insert: 'top',
+            container: 'top-center',
+            animationIn: ['animated', 'fadeIn'],
+            animationOut: ['animated', 'fadeOut'],
+            dismiss: {
+              duration: 1000,
+              // onScreen: true,
+            },
           });
-          localStorage.setItem(imageName, JSON.stringify(saveImageData));
         }
+        // for (let imageName in jsonData) {
+        //单json 多图片处理逻辑
+        // }
+        let saveImageData = {
+          activeGroupIndex: 0,
+          fileData: {},
+          groupList: [],
+          id: uuidv1(),
+          loadStatus: false,
+        };
+        jsonData.people.forEach((groupData, groupIndex) => {
+          let pointList = _.chunk(groupData.pose_keypoints_2d, 3);
+          let labelPoints = [];
+          for (let i in pointList) {
+            if (pointList[i][2] === -1) {
+              continue;
+            }
+            labelPoints.push({
+              checked: pointList[i][2] === 1 ? true : false,
+              id: uuidv1(),
+              labelIndex: i,
+              point: {
+                x: pointList[i][0],
+                y: pointList[i][1],
+              },
+            });
+          }
+          let groupTmp = {
+            activeLabelId: uuidv1(),
+            activeLabelNameIndex: 0,
+            activeLabelType: 'POINT',
+            firstLabelCreatedFlag: true,
+            highlightedLabelId: null,
+            labelPolygons: [],
+            labelRects: [],
+            labelPoints,
+          };
+          saveImageData.groupList.push(groupTmp);
+        });
+        localStorage.setItem(imageName, JSON.stringify(saveImageData));
         // startEditor(ProjectType.OBJECT_DETECTION);
       };
       reader.readAsText(file);

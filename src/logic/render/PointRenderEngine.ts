@@ -91,8 +91,14 @@ export class PointRenderEngine extends BaseRenderEngine {
             return labelPoint;
           }
         );
+        draft.modified = true;
       });
-
+      // const newImageData = produce(imageData, draft => {
+      //   draft.groupList[activeGroupIndex].labelPoints.push(labelPoint);
+      //   draft.modified = true;
+      // });
+      // //
+      localStorage.setItem(newImageData.fileData.name, JSON.stringify(newImageData));
       store.dispatch(updateImageDataById(imageData.id, newImageData));
     }
     this.transformInProgress = false;
@@ -206,6 +212,7 @@ export class PointRenderEngine extends BaseRenderEngine {
     const activeLabelIndex = EditorSelector.getActiveLabelNameIndex();
     const activeGroupIndex = EditorSelector.getActiveGroupIndex();
     const imageData: ImageData = EditorSelector.getActiveImageData();
+    // const imageDatas: ImageData[] =  EditorSelector.getImagesData();
     const existedLabelIndexs = EditorSelector.getAllPointLabelIndex();
     const labelsLength = EditorSelector.getLabelNameLength();
 
@@ -233,7 +240,10 @@ export class PointRenderEngine extends BaseRenderEngine {
 
     const newImageData = produce(imageData, draft => {
       draft.groupList[activeGroupIndex].labelPoints.push(labelPoint);
+      draft.modified = true;
     });
+    // //
+    localStorage.setItem(newImageData.fileData.name, JSON.stringify(newImageData));
     store.dispatch(updateImageDataById(imageData.id, newImageData));
     store.dispatch(updateFirstLabelCreatedFlag(true));
     store.dispatch(updateActiveLabelId(labelPoint.id));

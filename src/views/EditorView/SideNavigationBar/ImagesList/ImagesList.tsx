@@ -167,6 +167,7 @@ class ImagesList extends React.Component<IProps, IState> {
         imageData={this.props.imagesData[index]}
         onClick={() => this.onClickHandler(index)}
         isSelected={this.props.activeImageIndex === index}
+        isModified={this.props.imagesData[index].modified}
       />
     );
   };

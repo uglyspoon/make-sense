@@ -21,6 +21,7 @@ interface IProps {
   index: number;
   isScrolling?: boolean;
   isChecked?: boolean;
+  isModified?: boolean;
   onClick?: () => any;
   isSelected?: boolean;
   updateImageDataById: (id: string, newImageData: ImageData) => any;
@@ -118,7 +119,7 @@ class ImagePreview extends React.Component<IProps, IState> {
     };
   };
 
-  private handleLoadImageError = () => {};
+  private handleLoadImageError = () => { };
 
   private getClassName = () => {
     return classNames('ImagePreview', {
@@ -126,8 +127,16 @@ class ImagePreview extends React.Component<IProps, IState> {
     });
   };
 
+  private renderCheckIcon(isChecked: boolean, isModified: boolean) {
+    if (isModified) {
+      return <img className="CheckBox" draggable={false} src={'ico/checkbox-modify-color.png'} alt={'checkbox'} />
+    } else if (isChecked) {
+      return <img className="CheckBox" draggable={false} src={'ico/checkbox-checked-color.png'} alt={'checkbox'} />
+    }
+    return null
+  }
   public render() {
-    const { isChecked, style, onClick, index } = this.props;
+    const { isChecked, style, onClick, index, isModified } = this.props;
     return (
       <div className={this.getClassName()} style={style} onClick={onClick ? onClick : undefined} data-index={index}>
         {!!this.state.image ? (
@@ -140,15 +149,13 @@ class ImagePreview extends React.Component<IProps, IState> {
                 alt={this.state.image.alt}
                 style={{ ...this.getStyle(), left: 0, top: 0 }}
               />
-              {isChecked && (
-                <img className="CheckBox" draggable={false} src={'ico/checkbox-checked-color.png'} alt={'checkbox'} />
-              )}
+              {this.renderCheckIcon(isChecked, isModified)}
             </div>,
             <div className="Background" key={'Background'} style={this.getStyle()} />,
           ]
         ) : (
-          <ClipLoader sizeUnit={'px'} size={30} color={Settings.SECONDARY_COLOR} loading={true} />
-        )}
+            <ClipLoader sizeUnit={'px'} size={30} color={Settings.SECONDARY_COLOR} loading={true} />
+          )}
       </div>
     );
   }

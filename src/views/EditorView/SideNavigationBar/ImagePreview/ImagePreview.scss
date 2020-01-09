@@ -12,6 +12,7 @@
   align-content: center;
 
   border-bottom: solid 1px $darkThemeFirstColor;
+
   &:nth-child(odd) {
     border-right: solid 1px $darkThemeFirstColor;
   }
@@ -50,9 +51,21 @@
     .Foreground {
       transform: translate(-2px, 2px);
     }
+
     .Background {
       transform: translate(2px, -2px);
       background-color: $secondaryColor;
+    }
+  }
+
+  &.modified {
+    .Foreground {
+      transform: translate(-2px, 2px);
+    }
+
+    .Background {
+      transform: translate(2px, -2px);
+      background-color: red;
     }
   }
 
@@ -60,6 +73,7 @@
     .Foreground {
       transform: translate(-2px, 2px);
     }
+
     .Background {
       transform: translate(2px, -2px);
     }

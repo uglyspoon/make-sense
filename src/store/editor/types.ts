@@ -34,6 +34,7 @@ export type LabelData = {
 export type ImageData = {
   id: string;
   loadStatus: boolean;
+  modified?: boolean;
   fileData: File;
   activeGroupIndex: number;
   groupList: GroupType[];
