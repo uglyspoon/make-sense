@@ -57,7 +57,9 @@ const PointLabelsList: React.FC<IProps> = ({
       draft.groupList[imageData.activeGroupIndex].labelPoints = labelPoints.filter((currentLabel: LabelPoint) => {
         return currentLabel.id !== labelPointId;
       });
+      draft.modified = true;
     });
+    localStorage.setItem(newImageData.fileData.name.split('.').shift(), JSON.stringify(newImageData));
     updateImageDataById(imageData.id, newImageData);
     findNextAvailableLabelIndex();
   };
@@ -67,7 +69,10 @@ const PointLabelsList: React.FC<IProps> = ({
       draft.groupList[imageData.activeGroupIndex].labelPoints = labelPoints.map((currentLabel: LabelPoint) => {
         return currentLabel.id !== labelPointId ? currentLabel : { ...currentLabel, checked: !currentLabel.checked };
       });
+      draft.modified = true;
     });
+
+    localStorage.setItem(newImageData.fileData.name.split('.').shift(), JSON.stringify(newImageData));
     updateImageDataById(imageData.id, newImageData);
   };
 
@@ -140,12 +145,12 @@ const PointLabelsList: React.FC<IProps> = ({
       {labelPoints.length === 0 ? (
         <EmptyLabelList labelBefore={'标记第一个点'} labelAfter={'这张图片还没有标注'} />
       ) : (
-        <Scrollbars>
-          <div className="PointLabelsListContent" style={listStyleContent}>
-            {getChildren()}
-          </div>
-        </Scrollbars>
-      )}
+          <Scrollbars>
+            <div className="PointLabelsListContent" style={listStyleContent}>
+              {getChildren()}
+            </div>
+          </Scrollbars>
+        )}
     </div>
   );
 };

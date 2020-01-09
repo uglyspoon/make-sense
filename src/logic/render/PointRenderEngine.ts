@@ -98,7 +98,7 @@ export class PointRenderEngine extends BaseRenderEngine {
       //   draft.modified = true;
       // });
       // //
-      localStorage.setItem(newImageData.fileData.name, JSON.stringify(newImageData));
+      localStorage.setItem(newImageData.fileData.name.split('.').shift(), JSON.stringify(newImageData));
       store.dispatch(updateImageDataById(imageData.id, newImageData));
     }
     this.transformInProgress = false;
@@ -243,7 +243,7 @@ export class PointRenderEngine extends BaseRenderEngine {
       draft.modified = true;
     });
     // //
-    localStorage.setItem(newImageData.fileData.name, JSON.stringify(newImageData));
+    localStorage.setItem(newImageData.fileData.name.split('.').shift(), JSON.stringify(newImageData));
     store.dispatch(updateImageDataById(imageData.id, newImageData));
     store.dispatch(updateFirstLabelCreatedFlag(true));
     store.dispatch(updateActiveLabelId(labelPoint.id));

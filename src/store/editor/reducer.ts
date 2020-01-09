@@ -70,8 +70,8 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         break;
       case Action.LOAD_DATA_FROM_LOCALSTORGE:
         draft.imagesData.forEach((item, idx) => {
-          if (localStorage.getItem(item.fileData.name)) {
-            const newData = JSON.parse(localStorage.getItem(item.fileData.name));
+          if (localStorage.getItem(item.fileData.name.split('.').shift())) {
+            const newData = JSON.parse(localStorage.getItem(item.fileData.name.split('.').shift()));
             newData.fileData = draft.imagesData[idx].fileData;
             draft.imagesData[idx] = newData;
             // console.log(JSON.parse(localStorage.getItem(item.fileData.name)));
@@ -99,6 +99,9 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
           labelPoints: [],
           labelPolygons: [],
         });
+        //add by modified
+        draft.imagesData[activeImageIndex].modified = true;
+        localStorage.setItem(draft.imagesData[activeImageIndex].fileData.name.split('.').shift(), JSON.stringify(draft.imagesData[activeImageIndex]));
         break;
       case Action.DELETE_GROUP_LIST:
         const newGroupList = draft.imagesData[activeImageIndex].groupList.filter(
@@ -109,6 +112,9 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         const newActiveGroupIndex = newGroupList.findIndex(item => item === activeGroup);
         draft.imagesData[activeImageIndex].activeGroupIndex = newActiveGroupIndex;
         draft.imagesData[activeImageIndex].groupList = newGroupList;
+        //add by modified
+        draft.imagesData[activeImageIndex].modified = true;
+        localStorage.setItem(draft.imagesData[activeImageIndex].fileData.name.split('.').shift(), JSON.stringify(draft.imagesData[activeImageIndex]));
         break;
       case Action.UPDATE_ACTIVE_GROUP_INDEX:
         draft.imagesData[activeImageIndex].activeGroupIndex = action.payload.groupIndex;

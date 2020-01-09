@@ -59,8 +59,7 @@ const ImagesDropZone: React.FC<IProps> = ({
       var reader = new FileReader();
       reader.onloadend = function (evt) {
         let jsonData = JSON.parse((evt.target as any).result);
-        console.log('jsonData', jsonData)
-        const imageName = jsonData['image_name'];
+        const imageName = file.name.split('_').shift();
         if (!imageName) {
           store.addNotification({
             title: '导入失败!',
@@ -71,10 +70,11 @@ const ImagesDropZone: React.FC<IProps> = ({
             animationIn: ['animated', 'fadeIn'],
             animationOut: ['animated', 'fadeOut'],
             dismiss: {
-              duration: 1000,
+              duration: 5000,
               // onScreen: true,
             },
           });
+          return;
         }
         // for (let imageName in jsonData) {
         //单json 多图片处理逻辑
@@ -94,7 +94,7 @@ const ImagesDropZone: React.FC<IProps> = ({
               continue;
             }
             labelPoints.push({
-              checked: pointList[i][2] === 1 ? true : false,
+              checked: pointList[i][2] < 0.3 ? true : false,
               id: uuidv1(),
               labelIndex: i,
               point: {

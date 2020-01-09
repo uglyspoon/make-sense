@@ -3,8 +3,8 @@ import { ImageData } from '../store/editor/types';
 
 export class FileUtil {
   public static mapFileDataToImageData(fileData: File): ImageData {
-    if (JSON.parse(localStorage.getItem(fileData.name))) {
-      var newfileData = JSON.parse(localStorage.getItem(fileData.name));
+    if (JSON.parse(localStorage.getItem(fileData.name.split('.').shift()))) {
+      var newfileData = JSON.parse(localStorage.getItem(fileData.name.split('.').shift()));
       newfileData.fileData = fileData;
       newfileData.loadStatus = false;
       // newfileData.groupList.forEach((item, idx) => {
@@ -57,7 +57,7 @@ export class FileUtil {
   public static loadLabelsList(fileData: File, onSuccess: (labels: string[]) => any, onFailure: () => any) {
     const reader = new FileReader();
     reader.readAsText(fileData);
-    reader.onloadend = function(evt: any) {
+    reader.onloadend = function (evt: any) {
       const contents: string = evt.target.result;
       onSuccess(contents.split(/[\r\n]/));
     };
