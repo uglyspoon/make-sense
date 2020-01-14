@@ -1,12 +1,17 @@
-import {GeneralActionTypes, GeneralState} from "./types";
-import {Action} from "../Actions";
-import {CustomCursorStyle} from "../../data/enums/CustomCursorStyle";
+import { GeneralActionTypes, GeneralState } from "./types";
+import { Action } from "../Actions";
+import { CustomCursorStyle } from "../../data/enums/CustomCursorStyle";
+import { ViewPointSettings } from "../../settings/ViewPointSettings";
+
 
 const initialState: GeneralState = {
     windowSize: null,
     activePopupType: null,
     customCursorStyle: CustomCursorStyle.DEFAULT,
-    activeContext: null
+    activeContext: null,
+    imageDragMode: false,
+    preventCustomCursor: false,
+    zoom: ViewPointSettings.MIN_ZOOM
 };
 
 export function generalReducer(
@@ -36,6 +41,30 @@ export function generalReducer(
             return {
                 ...state,
                 activeContext: action.payload.activeContext
+            }
+        }
+        case Action.UPDATE_PREVENT_CUSTOM_CURSOR_STATUS: {
+            return {
+                ...state,
+                preventCustomCursor: action.payload.preventCustomCursor
+            }
+        }
+        case Action.UPDATE_IMAGE_DRAG_MODE_STATUS: {
+            return {
+                ...state,
+                imageDragMode: action.payload.imageDragMode
+            }
+        }
+        // case Action.UPDATE_PROJECT_DATA: {
+        //     return {
+        //         ...state,
+        //         projectData: action.payload.projectData
+        //     }
+        // }
+        case Action.UPDATE_ZOOM: {
+            return {
+                ...state,
+                zoom: action.payload.zoom
             }
         }
         default:

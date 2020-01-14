@@ -23,6 +23,10 @@ import { loadDataFromLocalStorge } from '../../../store/editor/actionCreators';
 
 import { EditorSelector } from '../../../store/selectors/EditorSelector';
 import produce from 'immer';
+import { ViewPortActions } from '../../../logic/actions/ViewPortActions';
+import Scrollbars from 'react-custom-scrollbars';
+import { isEqual } from 'lodash';
+import { PlatformModel } from '../../../staticModels/PlatformModel';
 
 interface IProps {
   size: ISize;
@@ -34,8 +38,22 @@ interface IProps {
   customCursorStyle: CustomCursorStyle;
   loadDataFromLocalStorge: () => any;
 }
+interface IState {
+  viewPortSize: ISize
+}
 
-class Editor extends React.Component<IProps, {}> {
+class Editor extends React.Component<IProps, IState> {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      viewPortSize: {
+        width: 0,
+        height: 0
+      },
+    };
+  }
+
   // =================================================================================================================
   // LIFE CYCLE
   // =================================================================================================================
@@ -68,12 +86,14 @@ class Editor extends React.Component<IProps, {}> {
     window.addEventListener(EventType.MOUSE_MOVE, this.update);
     window.addEventListener(EventType.MOUSE_UP, this.update);
     EditorModel.canvas.addEventListener(EventType.MOUSE_DOWN, this.update);
+    EditorModel.canvas.addEventListener(EventType.MOUSE_WHEEL, this.handleZoom);
   }
 
   private unmountEventListeners() {
     window.removeEventListener(EventType.MOUSE_MOVE, this.update);
     window.removeEventListener(EventType.MOUSE_UP, this.update);
     EditorModel.canvas.removeEventListener(EventType.MOUSE_DOWN, this.update);
+    EditorModel.canvas.removeEventListener(EventType.MOUSE_WHEEL, this.handleZoom);
   }
 
   // =================================================================================================================
@@ -111,8 +131,9 @@ class Editor extends React.Component<IProps, {}> {
   // =================================================================================================================
   // HELPER METHODS
   // =================================================================================================================
-
   private updateModelAndRender = () => {
+    ViewPortActions.updateViewPortSize();
+    ViewPortActions.updateDefaultViewPortImageRect();
     EditorActions.resizeCanvas(this.props.size);
     EditorActions.calculateAllCharacteristics();
     EditorActions.fullRender();
@@ -127,15 +148,53 @@ class Editor extends React.Component<IProps, {}> {
     EditorActions.fullRender();
   };
 
+  private handleZoom = (event: MouseWheelEvent) => {
+    if (event.ctrlKey || (PlatformModel.isMac && event.metaKey)) {
+      const scrollSign: number = Math.sign(event.deltaY);
+      if ((PlatformModel.isMac && scrollSign === -1) || (!PlatformModel.isMac && scrollSign === 1)) {
+        ViewPortActions.zoomOut();
+      }
+      else if ((PlatformModel.isMac && scrollSign === 1) || (!PlatformModel.isMac && scrollSign === -1)) {
+        ViewPortActions.zoomIn();
+      }
+    }
+  };
+
+  private onScrollbarsUpdate = (scrollbarContent) => {
+    let newViewPortContentSize = {
+      width: scrollbarContent.scrollWidth,
+      height: scrollbarContent.scrollHeight
+    };
+    if (!isEqual(newViewPortContentSize, this.state.viewPortSize)) {
+      this.setState({ viewPortSize: newViewPortContentSize })
+    }
+  };
+
   public render() {
     return (
-      <div className="Editor">
-        <canvas
-          className="ImageCanvas"
-          ref={ref => (EditorModel.canvas = ref)}
-          draggable={false}
-          onContextMenu={(event: React.MouseEvent<HTMLCanvasElement>) => event.preventDefault()}
-        />
+      <div
+        className="Editor"
+        ref={ref => EditorModel.editor = ref}
+        draggable={false}
+      >
+        <Scrollbars
+          ref={ref => EditorModel.viewPortScrollbars = ref}
+          renderTrackHorizontal={props => <div {...props} className="track-horizontal" />}
+          renderTrackVertical={props => <div {...props} className="track-vertical" />}
+          onUpdate={this.onScrollbarsUpdate}
+        >
+          <div
+            className="ViewPortContent"
+          >
+            <canvas
+              className="ImageCanvas"
+              ref={ref => (EditorModel.canvas = ref)}
+              draggable={false}
+              onContextMenu={(event: React.MouseEvent<HTMLCanvasElement>) => event.preventDefault()}
+            />
+            {/* {this.getOptionsPanels()} */}
+          </div>
+        </Scrollbars>
         <div
           className="MousePositionIndicator"
           ref={ref => (EditorModel.mousePositionIndicator = ref)}

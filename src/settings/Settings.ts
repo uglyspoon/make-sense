@@ -7,6 +7,7 @@ export class Settings {
 
   public static readonly TOP_NAVIGATION_BAR_HEIGHT_PX: number = 35;
   public static readonly BOTTOM_NAVIGATION_BAR_HEIGHT_PX: number = 45 + 1;
+  public static readonly EDITOR_TOP_NAVIGATION_BAR_HEIGHT_PX: number = 40 + 1;
   public static readonly SIDE_NAVIGATION_BAR_WIDTH_CLOSED_PX: number = 20 + 1;
   public static readonly SIDE_NAVIGATION_BAR_WIDTH_OPEN_PX: number =
     Settings.SIDE_NAVIGATION_BAR_WIDTH_CLOSED_PX + 300 + 1;

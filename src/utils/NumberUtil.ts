@@ -1,4 +1,7 @@
 export class NumberUtil {
+    public static isValueInRange(value: number, min: number, max: number): boolean {
+        return value >= min && value <= max;
+    }
     public static snapValueToRange(value: number, min: number, max: number): number {
         if (value < min)
             return min;

@@ -26,7 +26,7 @@ import { EditorModel } from '../../../staticModels/EditorModel';
 import { RenderEngineUtil } from '../../../utils/RenderEngineUtil';
 import { EditorActions } from '../../../logic/actions/EditorActions';
 import { EditorSelector } from '../../../store/selectors/EditorSelector';
-// import {RenderEngineUtil} from '../'
+import EditorTopNavigationBar from "../EditorTopNavigationBar/EditorTopNavigationBar";
 
 interface IProps {
   windowSize: ISize;
@@ -69,7 +69,7 @@ const EditorContainer: React.FC<IProps> = ({
         : Settings.SIDE_NAVIGATION_BAR_WIDTH_CLOSED_PX;
       return {
         width: windowSize.width - leftTabWidth - rightTabWidth,
-        height: windowSize.height - Settings.TOP_NAVIGATION_BAR_HEIGHT_PX - Settings.BOTTOM_NAVIGATION_BAR_HEIGHT_PX,
+        height: windowSize.height - Settings.TOP_NAVIGATION_BAR_HEIGHT_PX - Settings.BOTTOM_NAVIGATION_BAR_HEIGHT_PX - Settings.EDITOR_TOP_NAVIGATION_BAR_HEIGHT_PX,
       };
     } else return null;
   };
@@ -124,71 +124,71 @@ const EditorContainer: React.FC<IProps> = ({
     return <LabelsToolkit />;
   };
 
-  useEffect(() => {
-    return;
-    // setTimeout(() => {
-    //   localStorage.setItem(
-    //     'offsetHeight',
-    //     (document.getElementsByClassName('TopNavigationBar')[0] as any).offsetHeight
-    //   );
-    //   localStorage.setItem(
-    //     'offsetWidth',
-    //     (document.getElementsByClassName('SideNavigationBar left')[0] as any).offsetWidth
-    //   );
-    //   const editorData = EditorActions.getEditorData();
-    //   const offsetWidth = localStorage.getItem('offsetWidth');
-    //   const offsetHeight = localStorage.getItem('offsetHeight');
-    //   // const newIndexs: number[] = [];
-    //   // [].slice
-    //   //   .call(document.getElementsByClassName('ImagePreview'))
-    //   //   .forEach(r => newIndexs.push(+r.getAttribute('data-index')));
-    //   // const showImageIndexs: number[] = (window as any).showImageIndexs || [];
-    //   // const showImagesData = imagesData.filter((itme, idx) => newIndexs.includes(idx));
-    //   imagesData.forEach((imageData, imageIndex) => {
-    //     console.log('activeImageIndex', imageIndex);
-    //     const localData: ImageData = JSON.parse(localStorage.getItem(imageData.fileData.name));
-    //     // updateActiveImageIndex(imageIndex);
-    //     const evt_click = new MouseEvent('click', {
-    //       bubbles: true,
-    //       view: window,
-    //     });
-    //     document.querySelectorAll('.VirtualListContent .ImagePreview')[imageIndex].dispatchEvent(evt_click);
-    //     if (localData) {
-    //       localData.groupList.forEach((item, groupIndex) => {
-    //         if (groupIndex !== 0) {
-    //           updateGroupList(`person-${groupIndex}`);
-    //           updateActiveGroupIndex(groupIndex);
-    //         }
-    //         item.labelPoints.forEach((labelPoint, labelPointIndex) => {
-    //           const point = RenderEngineUtil.transferPointFromImageToCanvas(labelPoint.point, editorData);
-    //           const evt_up = new MouseEvent('mouseup', {
-    //             bubbles: true,
-    //             view: window,
-    //             clientX: point.x + +offsetWidth,
-    //             clientY: point.y + +offsetHeight,
-    //           });
-    //           const evt_down = new MouseEvent('mousedown', {
-    //             bubbles: true,
-    //             view: window,
-    //             clientX: point.x + +offsetWidth,
-    //             clientY: point.y + +offsetHeight,
-    //           });
-    //           EditorModel.canvas.dispatchEvent(evt_up);
-    //           EditorModel.canvas.dispatchEvent(evt_down);
-    //           console.log(imageIndex, groupIndex, labelPointIndex, labelPoint.labelIndex);
-    //           updateLabelIndexByInfo(
-    //             imageIndex,
-    //             groupIndex,
-    //             labelPointIndex,
-    //             labelPoint.labelIndex,
-    //             labelPoint.checked
-    //           );
-    //         });
-    //       });
-    //     }
-    //   });
-    // }, 1000);
-  }, []);
+  // useEffect(() => {
+  // return;
+  // setTimeout(() => {
+  //   localStorage.setItem(
+  //     'offsetHeight',
+  //     (document.getElementsByClassName('TopNavigationBar')[0] as any).offsetHeight
+  //   );
+  //   localStorage.setItem(
+  //     'offsetWidth',
+  //     (document.getElementsByClassName('SideNavigationBar left')[0] as any).offsetWidth
+  //   );
+  //   const editorData = EditorActions.getEditorData();
+  //   const offsetWidth = localStorage.getItem('offsetWidth');
+  //   const offsetHeight = localStorage.getItem('offsetHeight');
+  //   // const newIndexs: number[] = [];
+  //   // [].slice
+  //   //   .call(document.getElementsByClassName('ImagePreview'))
+  //   //   .forEach(r => newIndexs.push(+r.getAttribute('data-index')));
+  //   // const showImageIndexs: number[] = (window as any).showImageIndexs || [];
+  //   // const showImagesData = imagesData.filter((itme, idx) => newIndexs.includes(idx));
+  //   imagesData.forEach((imageData, imageIndex) => {
+  //     console.log('activeImageIndex', imageIndex);
+  //     const localData: ImageData = JSON.parse(localStorage.getItem(imageData.fileData.name));
+  //     // updateActiveImageIndex(imageIndex);
+  //     const evt_click = new MouseEvent('click', {
+  //       bubbles: true,
+  //       view: window,
+  //     });
+  //     document.querySelectorAll('.VirtualListContent .ImagePreview')[imageIndex].dispatchEvent(evt_click);
+  //     if (localData) {
+  //       localData.groupList.forEach((item, groupIndex) => {
+  //         if (groupIndex !== 0) {
+  //           updateGroupList(`person-${groupIndex}`);
+  //           updateActiveGroupIndex(groupIndex);
+  //         }
+  //         item.labelPoints.forEach((labelPoint, labelPointIndex) => {
+  //           const point = RenderEngineUtil.transferPointFromImageToCanvas(labelPoint.point, editorData);
+  //           const evt_up = new MouseEvent('mouseup', {
+  //             bubbles: true,
+  //             view: window,
+  //             clientX: point.x + +offsetWidth,
+  //             clientY: point.y + +offsetHeight,
+  //           });
+  //           const evt_down = new MouseEvent('mousedown', {
+  //             bubbles: true,
+  //             view: window,
+  //             clientX: point.x + +offsetWidth,
+  //             clientY: point.y + +offsetHeight,
+  //           });
+  //           EditorModel.canvas.dispatchEvent(evt_up);
+  //           EditorModel.canvas.dispatchEvent(evt_down);
+  //           console.log(imageIndex, groupIndex, labelPointIndex, labelPoint.labelIndex);
+  //           updateLabelIndexByInfo(
+  //             imageIndex,
+  //             groupIndex,
+  //             labelPointIndex,
+  //             labelPoint.labelIndex,
+  //             labelPoint.checked
+  //           );
+  //         });
+  //       });
+  //     }
+  //   });
+  // }, 1000);
+  // }, []);
   return (
     <div className="EditorContainer">
       <SideNavigationBar
@@ -199,6 +199,7 @@ const EditorContainer: React.FC<IProps> = ({
         renderContent={leftSideBarRender}
       />
       <div className="EditorWrapper" onMouseDown={() => ContextManager.switchCtx(ContextType.EDITOR)}>
+        <EditorTopNavigationBar />
         <Editor size={calculateEditorSize()} imageData={imagesData[activeImageIndex]} />
         <BottomNavigationBar
           imageData={imagesData[activeImageIndex]}

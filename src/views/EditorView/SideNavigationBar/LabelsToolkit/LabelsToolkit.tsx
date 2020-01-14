@@ -101,7 +101,7 @@ class LabelsToolkit extends React.Component<IProps, IState> {
       const isActive: boolean = labelType === activeLabelType && activeGroupIndex === currentGroupIndex;
       const tabData: ILabelToolkit = _.find(LabelToolkitData, { labelType });
       // const activeTabContentHeight: number = size.height - this.tabs.length * Settings.TOOLKIT_TAB_HEIGHT_PX - 50 - 50;
-      const activeTabContentHeight = 300;
+      const activeTabContentHeight = 600;
       const getClassName = (baseClass: string) =>
         classNames(baseClass, {
           active: isActive,

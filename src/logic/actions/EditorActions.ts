@@ -14,6 +14,8 @@ import { IPoint } from '../../interfaces/IPoint';
 import { DrawUtil } from '../../utils/DrawUtil';
 import { PrimaryEditorRenderEngine } from '../render/PrimaryEditorRenderEngine';
 import { ContextManager } from '../context/ContextManager';
+import { GeneralSelector } from '../../store/selectors/GeneralSelector';
+import { ViewPortActions } from './ViewPortActions';
 
 export class EditorActions {
   // =================================================================================================================
@@ -81,6 +83,10 @@ export class EditorActions {
       activeImageRectOnCanvas: EditorModel.imageRectOnCanvas,
       activeKeyCombo: ContextManager.getActiveCombo(),
       event: event,
+      zoom: GeneralSelector.getZoom(),
+      viewPortSize: EditorModel.viewPortSize,
+      defaultRenderImageRect: EditorModel.defaultRenderImageRect,
+      absoluteViewPortContentScrollPosition: ViewPortActions.getAbsoluteScrollPosition()
     };
   }
 
