@@ -35,8 +35,11 @@ interface IProps {
   updateImageDataById: (id: string, newImageData: ImageData) => any;
   activePopupType: PopupWindowType;
   activeLabelId: string;
-  customCursorStyle: CustomCursorStyle;
   loadDataFromLocalStorge: () => any;
+  customCursorStyle: CustomCursorStyle;
+  imageDragMode: boolean;
+  zoom: number;
+
 }
 interface IState {
   viewPortSize: ISize
@@ -145,7 +148,12 @@ class Editor extends React.Component<IProps, IState> {
     const editorData: EditorData = EditorActions.getEditorData(event);
     EditorModel.mousePositionOnCanvas = CanvasUtil.getMousePositionOnCanvasFromEvent(event, EditorModel.canvas);
     EditorModel.primaryRenderingEngine.update(editorData);
-    EditorModel.supportRenderingEngine && EditorModel.supportRenderingEngine.update(editorData);
+    // EditorModel.supportRenderingEngine && EditorModel.supportRenderingEngine.update(editorData);
+    if (this.props.imageDragMode) {
+      EditorModel.viewPortHelper.update(editorData);
+    } else {
+      EditorModel.supportRenderingEngine && EditorModel.supportRenderingEngine.update(editorData);
+    }
     !this.props.activePopupType && EditorActions.updateMousePositionIndicator(event);
     EditorActions.fullRender();
   };
@@ -228,6 +236,8 @@ const mapStateToProps = (state: AppState) => ({
     state.editor.imagesData[EditorSelector.getActiveImageIndex()].groupList[EditorSelector.getActiveGroupIndex()]
       .activeLabelId,
   customCursorStyle: state.general.customCursorStyle,
+  imageDragMode: state.general.imageDragMode,
+  zoom: state.general.zoom
 });
 
 export default connect(

@@ -74,7 +74,7 @@ const EditorTopNavigationBar: React.FC<IProps> = ({ activeContext, updateImageDr
           onClick={() => ViewPortActions.setOneForOneZoom()}
         />
       </div>
-      <div className="ButtonWrapper">
+      {/* <div className="ButtonWrapper">
         <ImageButton
           image={"ico/hand.png"}
           imageAlt={"hand"}
@@ -83,7 +83,7 @@ const EditorTopNavigationBar: React.FC<IProps> = ({ activeContext, updateImageDr
           onClick={imageDragOnClick}
           isActive={imageDragMode}
         />
-      </div>
+      </div> */}
     </div>
   )
 };

@@ -4,6 +4,7 @@ import { IRect } from "../interfaces/IRect";
 import { IPoint } from "../interfaces/IPoint";
 import { ISize } from "../interfaces/ISize";
 import { Scrollbars } from "react-custom-scrollbars";
+import { ViewPortHelper } from "../logic/helpers/ViewPortHelper";
 
 export class EditorModel {
   public static canvas: HTMLCanvasElement;
@@ -21,4 +22,6 @@ export class EditorModel {
   public static defaultRenderImageRect: IRect;
   public static viewPortScrollbars: Scrollbars;
   public static viewPortActionsDisabled: boolean = false;
+  public static viewPortHelper: ViewPortHelper;
+
 }

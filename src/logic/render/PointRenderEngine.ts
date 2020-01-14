@@ -242,7 +242,6 @@ export class PointRenderEngine extends BaseRenderEngine {
       draft.groupList[activeGroupIndex].labelPoints.push(labelPoint);
       draft.modified = true;
     });
-    // //
     localStorage.setItem(newImageData.fileData.name.split('.').shift(), JSON.stringify(newImageData));
     store.dispatch(updateImageDataById(imageData.id, newImageData));
     store.dispatch(updateFirstLabelCreatedFlag(true));

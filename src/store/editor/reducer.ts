@@ -120,14 +120,15 @@ export function editorReducer(state = initialState, action: EditorActionTypes): 
         draft.imagesData[activeImageIndex].activeGroupIndex = action.payload.groupIndex;
         break;
       case Action.FIND_NEXT_AVAILABLE_LABEL_INDEX:
-        const allIndex = [...Array(draft.labelNames.length)].map((v, k) => k);
+        const allIndex = [...Array(draft.labelNames.length)].map((v, k) => +k);
         const existedLabelIndexs = draft.imagesData[activeImageIndex].groupList[activeGroupIndex].labelPoints.map(
-          ele => ele.labelIndex
+          ele => +ele.labelIndex
         );
 
         const difference = existedLabelIndexs
           .concat(allIndex)
           .filter(v => !existedLabelIndexs.includes(v) || !allIndex.includes(v));
+        console.log('difference', existedLabelIndexs, allIndex)
         draft.imagesData[activeImageIndex].groupList[activeGroupIndex].activeLabelNameIndex = difference.length
           ? difference[0]
           : 0;

@@ -71,7 +71,6 @@ export class ViewPortActions {
 
   public static resizeViewPortContent() {
     const viewPortContentSize = ViewPortActions.calculateViewPortContentSize();
-    console.log('viewPortContentSize', viewPortContentSize)
     viewPortContentSize && ViewPortActions.resizeCanvas(viewPortContentSize);
   }
 
