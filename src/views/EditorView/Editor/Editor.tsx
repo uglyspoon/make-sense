@@ -134,7 +134,9 @@ class Editor extends React.Component<IProps, IState> {
   private updateModelAndRender = () => {
     ViewPortActions.updateViewPortSize();
     ViewPortActions.updateDefaultViewPortImageRect();
-    EditorActions.resizeCanvas(this.props.size);
+    ViewPortActions.resizeViewPortContent();
+
+    // EditorActions.resizeCanvas(this.props.size);
     EditorActions.calculateAllCharacteristics();
     EditorActions.fullRender();
   };

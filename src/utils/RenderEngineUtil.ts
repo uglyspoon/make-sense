@@ -8,6 +8,10 @@ import { PointUtil } from './PointUtil';
 import { IRect } from '../interfaces/IRect';
 
 export class RenderEngineUtil {
+  public static calculateImageScale(data: EditorData): number {
+    return data.realImageSize.width / data.viewPortContentImageRect.width;
+  }
+
   public static isMouseOverImage(data: EditorData): boolean {
     return RectUtil.isPointInside(data.activeImageRectOnCanvas, data.mousePositionOnCanvas);
   }
@@ -18,6 +22,16 @@ export class RenderEngineUtil {
 
   public static transferPolygonFromImageToCanvas(polygon: IPoint[], data: EditorData): IPoint[] {
     return polygon.map((point: IPoint) => RenderEngineUtil.transferPointFromImageToCanvas(point, data));
+  }
+
+  public static transferPointFromImageToViewPortContent(point: IPoint, data: EditorData): IPoint {
+    const scale = RenderEngineUtil.calculateImageScale(data);
+    return PointUtil.add(PointUtil.multiply(point, 1 / scale), data.viewPortContentImageRect);
+  }
+
+  public static transferPointFromViewPortContentToImage(point: IPoint, data: EditorData): IPoint {
+    const scale = RenderEngineUtil.calculateImageScale(data);
+    return PointUtil.multiply(PointUtil.subtract(point, data.viewPortContentImageRect), scale);
   }
 
   public static transferPointFromImageToCanvas(point: IPoint, data: EditorData): IPoint {

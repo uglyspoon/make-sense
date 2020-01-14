@@ -1,6 +1,8 @@
-import {IRect} from "../../interfaces/IRect";
-import {BaseRenderEngine} from "./BaseRenderEngine";
-import {EditorData} from "../../data/EditorData";
+import { IRect } from "../../interfaces/IRect";
+import { BaseRenderEngine } from "./BaseRenderEngine";
+import { EditorData } from "../../data/EditorData";
+import { EditorModel } from "../../staticModels/EditorModel";
+import { ViewPortActions } from "../actions/ViewPortActions";
 
 export class PrimaryEditorRenderEngine extends BaseRenderEngine {
 
@@ -12,15 +14,17 @@ export class PrimaryEditorRenderEngine extends BaseRenderEngine {
     // EVENT HANDLERS
     // =================================================================================================================
 
-    public mouseMoveHandler(data: EditorData): void {}
-    public mouseDownHandler(data: EditorData): void {}
-    public mouseUpHandler(data: EditorData): void {}
+    public mouseMoveHandler(data: EditorData): void { }
+    public mouseDownHandler(data: EditorData): void { }
+    public mouseUpHandler(data: EditorData): void { }
 
     // =================================================================================================================
     // RENDERING
     // =================================================================================================================
 
-    public render(data: EditorData): void {}
+    public render(data: EditorData): void {
+        EditorModel.primaryRenderingEngine.drawImage(EditorModel.image, ViewPortActions.calculateViewPortContentImageRect());
+    }
 
     public drawImage(image: HTMLImageElement, imageRect: IRect) {
         if (!!image && !!this.canvas) {

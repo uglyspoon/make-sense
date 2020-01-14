@@ -90,6 +90,10 @@ const ImagesDropZone: React.FC<IProps> = ({
           let pointList = _.chunk(groupData.pose_keypoints_2d, 3);
           let labelPoints = [];
           for (let i in pointList) {
+            // console.log('pointList' + i, pointList[i])
+            if (pointList[i][0] === 0 && pointList[i][1] === 0 && pointList[i][2] === 0) {
+              continue;
+            }
             if (pointList[i][2] === -1) {
               continue;
             }
