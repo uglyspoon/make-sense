@@ -108,7 +108,6 @@ export class ViewPortActions {
   }
 
   public static setScrollPosition(position: IPoint) {
-    console.log('position', position)
     EditorModel.viewPortScrollbars.scrollLeft(position.x);
     EditorModel.viewPortScrollbars.scrollTop(position.y);
   }

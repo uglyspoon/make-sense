@@ -50,6 +50,7 @@ export function generalReducer(
             }
         }
         case Action.UPDATE_IMAGE_DRAG_MODE_STATUS: {
+            console.log('action.payload.imageDragMode', action.payload.imageDragMode)
             return {
                 ...state,
                 imageDragMode: action.payload.imageDragMode

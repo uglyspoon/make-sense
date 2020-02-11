@@ -66,6 +66,7 @@ class Editor extends React.Component<IProps, IState> {
 
     const { imageData, activeLabelType } = this.props;
     ContextManager.switchCtx(ContextType.EDITOR);
+    EditorActions.mountRenderEnginesAndHelpers(activeLabelType);
     EditorActions.mountRenderEngines(activeLabelType);
     ImageLoadManager.addAndRun(this.loadImage(imageData));
   }

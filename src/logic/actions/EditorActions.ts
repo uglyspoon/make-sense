@@ -18,6 +18,7 @@ import { GeneralSelector } from '../../store/selectors/GeneralSelector';
 import { ViewPortActions } from './ViewPortActions';
 import { ImageUtil } from '../../utils/ImageUtil';
 import { PointUtil } from '../../utils/PointUtil';
+import { ViewPortHelper } from "../helpers/ViewPortHelper";
 import { CustomCursorStyle } from '../../data/enums/CustomCursorStyle';
 
 export class EditorActions {
@@ -47,6 +48,12 @@ export class EditorActions {
   }
 
   public static mountRenderEngines(activeLabelType: LabelType) {
+    EditorModel.primaryRenderingEngine = new PrimaryEditorRenderEngine(EditorModel.canvas);
+    EditorActions.mountSupportRenderingEngine(activeLabelType);
+  }
+
+  public static mountRenderEnginesAndHelpers(activeLabelType: LabelType) {
+    EditorModel.viewPortHelper = new ViewPortHelper();
     EditorModel.primaryRenderingEngine = new PrimaryEditorRenderEngine(EditorModel.canvas);
     EditorActions.mountSupportRenderingEngine(activeLabelType);
   }

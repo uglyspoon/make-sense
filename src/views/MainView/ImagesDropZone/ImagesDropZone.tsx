@@ -59,7 +59,7 @@ const ImagesDropZone: React.FC<IProps> = ({
       var reader = new FileReader();
       reader.onloadend = function (evt) {
         let jsonData = JSON.parse((evt.target as any).result);
-        const imageName = file.name.split('_').shift();
+        const imageName = file.name.replace('_keypoints.json', '');
         if (!imageName) {
           store.addNotification({
             title: '导入失败!',
